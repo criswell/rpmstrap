@@ -18,6 +18,7 @@
 
 unset DEBUG JUST_PRINT_RPMS DOWNLOAD_ONLY ARCH || true
 unset UNPACK_TARBALL ADDITIONAL LIST_SUITES || true
+unset FIND_BEST_MIRROR || true
 DEBUG=yes
 
 TMP_DIR="/tmp/rpmstrap."
@@ -44,6 +45,8 @@ usage()
       --print-rpms           print the packages to be installed, and exit
       --unpack-tarball       acquire .rpms from a tarball instead of http
       --list-suites          list the available suites this program knows
+      --find-best-mirror     find the best mirror (warning VERY slow, may be
+                               better to just use a slow mirror ;-)
       --help                 display this help and exit
       --include=A,B,C        adds specified names to the list of base packages
       --exclude=A,B,C        removes specified packages from the list
@@ -57,6 +60,11 @@ if [ $# != 0 ] ; then
             --help)
                 usage
                 exit 0
+                ;;
+            --find-best-mirror)
+                # XXX Later on, would be nice if this was persistant
+                FIND_BEST_MIRROR=yes
+                shift
                 ;;
             --print-rpms)
                 JUST_PRINT_RPMS=yes

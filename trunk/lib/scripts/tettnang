@@ -55,7 +55,7 @@ EOF
             ;;
     esac
 
-    if [ $try_best ]; then
+    if [ -n $FIND_BEST_MIRROR ]; then
         # Find shortest speed
         local lowtimepass=99999999999999999999999999
         for a in $big_mirror_list
