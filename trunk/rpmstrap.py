@@ -6,6 +6,7 @@ import commands
 import getopt
 import sys
 import getopt
+import urllib
 
 def list_files(root, patterns='*', recurse=1, return_folders=0):
     """List all the files in a directory"""
@@ -67,6 +68,28 @@ def load_rpm_passfile(passfile, verbose=0):
     if verbose:
         print ":> load_rpm_passfile(" + passfile + ")"
 
+    pkglist = []
+
     f = open(passfile, 'r')
     for line in f:
         (passnum, package) = line.split(":")
+        passnum = int(passnum) # Ugly, I know
+        pkglist[passnum] = package
+
+    f.close()
+
+    return pkglist
+
+def download_rpm(rpm, storage_dir, url, verbose=0):
+    """Download a given rpm"""
+
+    if verbose:
+        print ":> download_rpm(" + rpm + ", " + storage_dir + ", " + url + ")"
+
+    f = urllib.urlopen(url)
+    for line in f:
+        print line
+    
+#def iterate_install(pkglist, root,
+
+download_rpm("flee", "blee", "ftp://mirrors.xmission.com/fedora/core/2/i386/os/Fedora/RPMS/")
