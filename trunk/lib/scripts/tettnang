@@ -26,7 +26,7 @@ work_out_mirror() {
     local big_mirror_list=""
     local lowurl=""
     case $ARCH in
-        "i386")
+        i[3456]86)
             big_mirror_list=$(cat <<EOF
 http://download.fedora.redhat.com/pub/fedora/linux/core/2/i386/os/Fedora/RPMS/
 http://mirror.linux.duke.edu/pub/fedora/linux/core/2/i386/os/Fedora/RPMS/
@@ -51,23 +51,14 @@ EOF
             lowurl="http://download.fedora.redhat.com/pub/fedora/linux/core/2/x86_64/os/Fedora/RPMS/"
             ;;
         *)
-            # Unsupported, fail silently for now
+            die "Arch $ARCH is unsupported"
             ;;
     esac
 
-    if [ -n $FIND_BEST_MIRROR ]; then
+    if [ -n "$FIND_BEST_MIRROR" ]; then
         # Find shortest speed
-        local lowtimepass=99999999999999999999999999
-        for a in $big_mirror_list
-        do
-            timepass=$(/usr/bin/time -f "%e" --quiet wget -q -c -T 1 --connect-timeout=.5 $a --read-timeout=.5 2>&1)
-            setup_env
-            cd $TMP_DIR
-            if [ $(echo "$timepass < $lowtimepass" | bc -l) ]; then
-                lowtimepass=$timepass
-                lowurl=$a
-            fi
-        done
+        find_best_mirror $big_mirror_list
+        lowurl=$BEST_MIRROR
     fi
 
     MIRROR=$lowurl
@@ -256,12 +247,12 @@ print_rpms() {
 
 install_rpms() {
     local rpm_list=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
-    local rpm_to_get=""
+    local rpms_to_get=""
     for a in $rpm_list
     do
-        rpm_to_get=$rpm_to_get"${MIRROR%/}/$a "
+        rpms_to_get=$rpms_to_get"${MIRROR%/}/$a "
     done
-    get_rpms $rpm_to_get
+    get_rpms $rpms_to_get
 
     if [ "$DOWNLOAD_ONLY" = "" ]; then
         if [ $(id -u) -ne 0 ]; then

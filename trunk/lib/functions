@@ -1,5 +1,5 @@
 usage_error() {
-  echo "usage: [OPTION]... <suite> <target> [<mirror> [<script>]]"
+  echo "usage: [OPTION]... <suite> <target> [<mirror>]"
   echo "Try \`$PROGNAME --help' for more information."
   die "$@"
 }
@@ -16,6 +16,7 @@ warn () {
 
 die () {
     echo "$PROGNAME: critical error: $*" >&2
+    cleanup_env
     exit 1
 }
 
@@ -58,7 +59,42 @@ get_rpms_fuzzy() {
 
 }
 
+find_best_mirror() {
+    # Given a list of mirrors, run through them finding
+    # the "best" one
+    #
+    # XXX: FIXME
+    # It would be way cool to be able to store this information
+    # site-wide (/etc/rpmstrap or some such whatever) so you could
+    # run it once (or from a cron or whatever) and it would store
+    # its findings there for default usage. This is because, as
+    # it stands right now, finding the best mirror will probably
+    # take longer than it would just to use any single mirror.
+    # i.e., this function is worthless... but it has potential
+    # XXX
+    #
+    local lowtimepass=99999999999999999999999999
+    local lowurl=""
+    for a in $@
+    do
+        if [ "$lowurl" = "" ]; then
+            lowurl=$a
+        fi
+        timepass=$(/usr/bin/time -f "%e" --quiet wget -q -c -T 1 --connect-timeout=.5 $a --read-timeout=.5 2>&1)
+        setup_env
+        cd $TMP_DIR
+        if [ $(echo "$timepass < $lowtimepass" | bc -l) ]; then
+            lowtimepass=$timepass
+            lowurl=$a
+        fi
+    done
+    BEST_MIRROR=$lowurl
+}
+
 setup_env() {
+    if [ -e "$TARGET" ]; then
+        die "chroot directory $TARGET already exists; aborting"
+    fi
     cleanup_env
     mkdir -p $TMP_DIR
 }

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2004 Sam Hart
+# Portions Copyright 2005 Progeny Linux Systems, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,18 +14,24 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# Author: Sam Hart
 
 unset DEBUG JUST_PRINT_RPMS DOWNLOAD_ONLY ARCH || true
 unset UNPACK_TARBALL ADDITIONAL LIST_SUITES || true
-unset FIND_BEST_MIRROR || true
-DEBUG=yes
+unset FIND_BEST_MIRROR BEST_MIRROR || true
 
 TMP_DIR="/tmp/rpmstrap."
 TMP_DIR=${TMP_DIR}$(date +%j%H%M%S)
 PROGNAME=${0##*/}
 PWD=$(pwd)
 PWD=${PWD%/}
+
+# XXX: FIXME
+# This really should happen another way using
+# RPM since rpmstrap may run on a non-RPM system
+ARCH=$(uname -m)
 
 if [ "$RPMSTRAP_DIR" = "" ]; then
     RPMSTRAP_DIR=./lib
@@ -136,22 +142,31 @@ else
         usage_error "You must specify a suite with the --print-rpms option."
     fi
 
+    trace "Preparing variables"
+
     RPMSUITE=$1
     TARGET=$PWD/$2
     TARGET=${TARGET%/}
 
     SCRIPT="$RPMSTRAP_DIR/scripts/$RPMSUITE"
 
+    trace "Loading $SCRIPT suite"
+
     . $SCRIPT
 
-    ARCH=i386
-
+    trace "Working out mirror"
     work_out_mirror
+
+    trace "Work out RPMS"
     work_out_rpms
+
     if [ -n "$JUST_PRINT_RPMS" ]; then
+        trace "Just printing RPMS"
         print_rpms
     else
+        trace "Install RPMS"
         install_rpms
+        trace "Done"
         cleanup_env
     fi
 fi
