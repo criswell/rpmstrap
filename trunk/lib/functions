@@ -1,0 +1,61 @@
+error() {
+    if [ -n "$DEBUG" ]; then
+        echo "$PROGNAME: error: $*" >&2
+    fi
+}
+
+trace () {
+    if [ -n "$DEBUG" ]; then
+        echo "$PROGNAME: debug: $*" >&2
+    fi
+}
+
+warn () {
+    echo "$PROGNAME: warning: $*" >&2
+}
+
+die () {
+    echo "$PROGNAME: critical error: $*" >&2
+    exit 1
+}
+
+get_rpms() {
+    # Takes array of rpms to obtain
+    setup_env
+    cd $TMP_DIR
+    local verbose="-q"
+    #if [ -n "$DEBUG" ]; then
+    #    verbose=""
+    #fi
+    
+    for a in $@
+    do
+        wget $verbose $a
+    done
+    cd $PWD
+}
+
+get_rpms_fuzzy() {
+    # Takes array of rpms to obtain
+    setup_env
+    cd $TMP_DIR
+    local verbose="-q"
+    if [ -n "$DEBUG" ]; then
+        verbose=""
+    fi
+    
+    for a in $@
+    do
+        wget $verbose -v -r -nH -nd --no-parent -l inf -A ""$a-*"" $RPM_URL
+    done
+    cd $PWD
+}
+
+setup_env() {
+    cleanup_env
+    mkdir -p $TMP_DIR
+}
+
+cleanup_env() {
+    rm -fr $TMP_DIR
+}

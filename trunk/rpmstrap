@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# Copyright 2004
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+
+unset DEBUG
+DEBUG=yes
+
+TMP_DIR="/tmp/rpmstrap."
+TMP_DIR=${TMP_DIR}$(date +%j%H%M%S)
+PROGNAME=${0##*/}
+PWD=$(pwd)
+PWD=${PWD%/}
+
+if [ "$RPMSTRAP_DIR" = "" ]; then
+    RPMSTRAP_DIR=./lib
+fi
+
+. $RPMSTRAP_DIR/functions
+
+RPMSUITE=$1
+TARGET=$PWD/$2
+TARGET=${TARGET%/}
+
+SCRIPT="$RPMSTRAP_DIR/scripts/$RPMSUITE"
+
+. $SCRIPT
+
+ARCH=i386
+
+work_out_mirror
+work_out_rpms
+install_rpms
+ls $TMP_DIR
+cleanup_env
