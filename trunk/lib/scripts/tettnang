@@ -244,6 +244,16 @@ EOF
 esac
 }
 
+print_rpms() {
+    local rpm_list=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
+    
+    echo "RPMs for suite $RPMSUITE and arch $ARCH"
+    for a in $rpm_list
+    do
+        echo " : $a"
+    done
+}
+
 install_rpms() {
     local rpm_list=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
     local rpm_to_get=""
@@ -252,47 +262,48 @@ install_rpms() {
         rpm_to_get=$rpm_to_get"${MIRROR%/}/$a "
     done
     get_rpms $rpm_to_get
-    
-    if [ $(id -u) -ne 0 ]; then
-        die "must have root privileges to create chroot"
-    fi
 
-    trace "creating chroot directory"
-    if [ -e "$TARGET" ]; then
-        die "chroot directory $TARGET already exists; aborting"
-    fi
-
-    mkdir -p "$TARGET/var/lib/rpm"
-
-    local passnum=0
-
-    while :; do
-        trace "Installing pass number $passnum..."
-        local pass=$(echo "$RPMS" | grep "^$passnum:" | sed 's/^[0-9]\+://')
-        if [ -z "$pass" ]; then
-            trace "...nothing left to do."
-            break
-        else
-            set -- $pass
-
-            # make sure each RPM exists
-            for RPM; do
-                if [ ! -e "$RPM" ]; then
-                    die "cannot find required package $RPM"
-                fi
-            done
-
-            # rpm insists on having an absolute path to its --root option's argument
-            if ! expr "$TARGET" : "/" >/dev/null 2>&1; then
-                TARGET="$PWD/$TARGET"
-            fi
-            trace "Installing $* to $TARGET..."
-            if ! rpm --install --root "$TARGET" $@; then
-                die "command \"rpm --install --root $TARGET $*\"" \
-                "failed"
-            fi
+    if [ "$DOWNLOAD_ONLY" = "" ]; then
+        if [ $(id -u) -ne 0 ]; then
+            die "must have root privileges to create chroot"
         fi
-        passnum=$(( $passnum + 1 ))
-    done
 
+        trace "creating chroot directory"
+        if [ -e "$TARGET" ]; then
+            die "chroot directory $TARGET already exists; aborting"
+        fi
+
+        mkdir -p "$TARGET/var/lib/rpm"
+
+        local passnum=0
+
+        while :; do
+            trace "Installing pass number $passnum..."
+            local pass=$(echo "$RPMS" | grep "^$passnum:" | sed 's/^[0-9]\+://')
+            if [ -z "$pass" ]; then
+                trace "...nothing left to do."
+                break
+            else
+                set -- $pass
+
+                # make sure each RPM exists
+                for RPM; do
+                    if [ ! -e "$RPM" ]; then
+                        die "cannot find required package $RPM"
+                    fi
+                done
+
+                # rpm insists on having an absolute path to its --root option's argument
+                if ! expr "$TARGET" : "/" >/dev/null 2>&1; then
+                    TARGET="$PWD/$TARGET"
+                fi
+                trace "Installing $* to $TARGET..."
+                if ! rpm --install --root "$TARGET" $@; then
+                    die "command \"rpm --install --root $TARGET $*\"" \
+                    "failed"
+                fi
+            fi
+            passnum=$(( $passnum + 1 ))
+        done
+    fi
 }

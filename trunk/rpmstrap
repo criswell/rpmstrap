@@ -17,7 +17,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 unset DEBUG JUST_PRINT_RPMS DOWNLOAD_ONLY ARCH || true
-unset UNPACK_TARBALL ADDITIONAL || true
+unset UNPACK_TARBALL ADDITIONAL LIST_SUITES || true
 DEBUG=yes
 
 TMP_DIR="/tmp/rpmstrap."
@@ -43,6 +43,7 @@ usage()
       --download-only        download packages, but don't perform installation
       --print-rpms           print the packages to be installed, and exit
       --unpack-tarball       acquire .rpms from a tarball instead of http
+      --list-suites          list the available suites this program knows
       --help                 display this help and exit
       --include=A,B,C        adds specified names to the list of base packages
       --exclude=A,B,C        removes specified packages from the list
@@ -63,6 +64,10 @@ if [ $# != 0 ] ; then
                 ;;
             --download-only)
                 DOWNLOAD_ONLY=yes
+                shift
+                ;;
+            --list-suites)
+                LIST_SUITES=yes
                 shift
                 ;;
             --arch)
@@ -106,22 +111,39 @@ else
     usage_error "You must specify a suite and a target."
 fi
 
-if [ "$1" = "" ] || ( [ "$2" = "" ] && [ "$JUST_PRINT_RPMS" = "" ] ); then
-  usage_error "You must specify a suite and a target."
+if [ -n "$LIST_SUITES" ]; then
+    SCRIPT_DIR="$RPMSTRAP_DIR/scripts"
+    SUITES=$(ls $SCRIPT_DIR)
+
+    echo "Possible RPM Suites:"
+    for a in $SUITES
+    do
+        printf "\t$a\n"
+        # XXX This should be done much cleaner later
+    done
+else
+    if [ "$1" = "" ] && ( [ "$2" = "" ] && [ "$JUST_PRINT_RPMS" = "" ] ); then
+        usage_error "You must specify a suite and a target."
+    elif [ "$1" = "" ] && ( [ "$2" = "" ] && [ -n $JUST_PRINT_RPMS ] ); then
+        usage_error "You must specify a suite with the --print-rpms option."
+    fi
+
+    RPMSUITE=$1
+    TARGET=$PWD/$2
+    TARGET=${TARGET%/}
+
+    SCRIPT="$RPMSTRAP_DIR/scripts/$RPMSUITE"
+
+    . $SCRIPT
+
+    ARCH=i386
+
+    work_out_mirror
+    work_out_rpms
+    if [ -n "$JUST_PRINT_RPMS" ]; then
+        print_rpms
+    else
+        install_rpms
+        cleanup_env
+    fi
 fi
-
-RPMSUITE=$1
-TARGET=$PWD/$2
-TARGET=${TARGET%/}
-
-SCRIPT="$RPMSTRAP_DIR/scripts/$RPMSUITE"
-
-. $SCRIPT
-
-ARCH=i386
-
-work_out_mirror
-work_out_rpms
-install_rpms
-ls $TMP_DIR
-cleanup_env

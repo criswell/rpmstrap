@@ -24,15 +24,18 @@ get_rpms() {
     setup_env
     cd $TMP_DIR
     local verbose="-q"
-    #if [ -n "$DEBUG" ]; then
-    #    verbose=""
-    #fi
+    if [ -n "$DEBUG" ]; then
+        verbose=""
+    fi
     
     for a in $@
     do
         wget $verbose $a
     done
     cd $PWD
+    if [ -n "$DOWNLOAD_ONLY" ]; then
+        mv $TMP_DIR $TARGET
+    fi
 }
 
 get_rpms_fuzzy() {
@@ -49,6 +52,10 @@ get_rpms_fuzzy() {
         wget $verbose -v -r -nH -nd --no-parent -l inf -A ""$a-*"" $RPM_URL
     done
     cd $PWD
+    if [ -n "$DOWNLOAD_ONLY" ]; then
+        mv $TMP_DIR $TARGET
+    fi
+
 }
 
 setup_env() {
