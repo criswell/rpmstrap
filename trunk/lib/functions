@@ -1,7 +1,7 @@
-error() {
-    if [ -n "$DEBUG" ]; then
-        echo "$PROGNAME: error: $*" >&2
-    fi
+usage_error() {
+  echo "usage: [OPTION]... <suite> <target> [<mirror> [<script>]]"
+  echo "Try \`$PROGNAME --help' for more information."
+  die "$@"
 }
 
 trace () {
