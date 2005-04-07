@@ -252,6 +252,7 @@ EOF
 50:libxml2-python-2.6.14-2.i386.rpm
 50:file-4.10-2.i386.rpm
 50:perl-5.8.5-9.i386.rpm
+50:perl-Filter-1.30-6.i386.rpm
 50:patch-2.5.4-20.i386.rpm
 51:rpmdb-fedora-3-0.20041103.i386.rpm
 51:rpm-build-4.3.2-21.i386.rpm
