@@ -17,9 +17,9 @@
 # Author: Sam Hart
 
 work_out_mirror() {
-    local try_best="$1"
+    #local try_best="$1"
     local big_mirror_list=""
-    local lowurl=""
+    #local lowurl=""
     case $ARCH in
         i[3456]86)
             big_mirror_list=$(cat <<EOF
@@ -29,7 +29,7 @@ http://ibiblio.org/pub/linux/distributions/caoslinux/centos/4/os/i386/CentOS/RPM
 http://centos.absinet.net/centos/4.0/os/i386/CentOS/RPMS/
 EOF
             )
-            lowurl="http://mirror.centos.org/centos/4/os/i386/CentOS/RPMS/"
+            #lowurl="http://mirror.centos.org/centos/4/os/i386/CentOS/RPMS/"
             ;;
         "x86_64")
             big_mirror_list=$(cat <<EOF
@@ -39,20 +39,22 @@ http://ibiblio.org/pub/linux/distributions/caoslinux/centos/4/os/x86_64/CentOS/R
 http://centos.absinet.net/centos/4.0/os/x86_64/CentOS/RPMS/
 EOF
             )
-            lowurl="http://mirror.centos.org/centos/4/os/x86_64/CentOS/RPMS/"
+            #lowurl="http://mirror.centos.org/centos/4/os/x86_64/CentOS/RPMS/"
             ;;
         *)
             die "Arch $ARCH is unsupported"
             ;;
     esac
 
-    if [ -n "$FIND_BEST_MIRROR" ]; then
-        # Find shortest speed
-        find_best_mirror $big_mirror_list
-        lowurl=$BEST_MIRROR
-    fi
+    set_mirrors $big_mirror_list
 
-    MIRROR=$lowurl
+    #if [ -n "$FIND_BEST_MIRROR" ]; then
+        # Find shortest speed
+    #    find_best_mirror $big_mirror_list
+    #    lowurl=$BEST_MIRROR
+    #fi
+
+    #MIRROR=$lowurl
 }
 
 work_out_rpms() {

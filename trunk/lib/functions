@@ -23,6 +23,7 @@ die () {
 get_rpms() {
     # Takes array of rpms to obtain
     local verbose="-q"
+    
     if [ -n "$DEBUG" ]; then
         verbose=""
     fi
@@ -40,12 +41,38 @@ get_rpms() {
         PKG_DIR=$LOCAL_SOURCE
         KEEP_TMP="yes"
     else
-        trace "get_rpms(): Getting RPMS from $MIRROR"
         setup_env
         cd $TMP_DIR
         for a in $@
         do
-            wget $verbose ${MIRROR%/}/$a
+            if [ -n "$MIRROR" ]; then
+                trace "get_rpms(): Getting RPM from $MIRROR"
+                wget $verbose ${MIRROR%/}/$a
+                if [ ! -f "$a" ]; then
+                    die "$a not retrievable from $MIRROR"
+                fi
+            else
+                if [ -n "$TRY_MIRRORS" ]; then
+                    for mir in $MIRROR_LIST
+                    do
+                        trace "get_rpms(): Getting RPM from $mir"
+                        wget $verbose ${MIRROR%/}/$a
+                        if [ ! -f "$a" ]; then
+                            break
+                        fi
+                    done
+                    if [ ! -f "$TMP_DIR/$a" ]; then
+                        die "Could not obtain $a from mirror list"
+                    fi
+                else
+                    trace "get_rpms(): Getting RPM from $BEST_MIRROR"
+                    trace "wget $verbose ${BEST_MIRROR%/}/$a"
+                    wget $verbose ${BEST_MIRROR%/}/$a
+                    if [ ! -f "$a" ]; then
+                        die "Could not obtain $a from $BEST_MIRROR"
+                    fi
+                fi
+            fi
         done
         cd $PWD
         if [ -n "$DOWNLOAD_ONLY" ]; then
@@ -96,8 +123,9 @@ find_best_mirror() {
             lowurl=$a
         fi
         timepass=$(/usr/bin/time -f "%e" --quiet wget -q -c -T 1 --connect-timeout=.5 $a --read-timeout=.5 2>&1)
-        setup_env
-        cd $TMP_DIR
+        # XXX: Why was this here? Is it even needed?
+        #setup_env
+        #cd $TMP_DIR
         if [ $(echo "$timepass < $lowtimepass" | bc -l) ]; then
             lowtimepass=$timepass
             lowurl=$a
@@ -116,4 +144,26 @@ setup_env() {
 
 cleanup_env() {
     rm -fr $TMP_DIR
+}
+
+set_mirrors() {
+    # Given a list of mirrors, will select one or more
+    # for the real mirror list
+    if [ ! -n "$1" ]; then
+        die "Error in suite '$RPMSUITE'! No mirror list passed to set_mirrors()"
+    fi
+
+    if [ -n "$TRY_MIRRORS" ]; then
+        MIRROR_LIST=$@
+    else
+        MIRROR_LIST=$1
+    fi
+    
+    if [ -n "$FIND_BEST_MIRROR" ]; then
+        trace "Finding best mirror- This will take a while"
+        # Find shortest speed
+        find_best_mirror $big_mirror_list
+    else
+        BEST_MIRROR=$1
+    fi
 }

@@ -22,9 +22,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 work_out_mirror() {
-    local try_best="$1"
+    #local try_best="$1"
     local big_mirror_list=""
-    local lowurl=""
+    #local lowurl=""
     trace "Checking for $ARCH arch"
     case $ARCH in
         i[3456]86)
@@ -37,7 +37,7 @@ http://mirrors.xmission.com/fedora/core/3/i386/os/Fedora/RPMS/
 http://redhat.secsup.org/fedora/core/3/i386/os/Fedora/RPMS/
 EOF
             )
-            lowurl="http://download.fedora.redhat.com/pub/fedora/linux/core/3/i386/os/Fedora/RPMS/"
+            #lowurl="http://download.fedora.redhat.com/pub/fedora/linux/core/3/i386/os/Fedora/RPMS/"
             ;;
         "x86_64")
             big_mirror_list=$(cat <<EOF
@@ -49,21 +49,23 @@ http://mirrors.xmission.com/fedora/core/3/x86_64/os/Fedora/RPMS/
 http://redhat.secsup.org/fedora/core/3/x86_64/os/Fedora/RPMS/
 EOF
             )
-            lowurl="http://download.fedora.redhat.com/pub/fedora/linux/core/3/x86_64/os/Fedora/RPMS/"
+            #lowurl="http://download.fedora.redhat.com/pub/fedora/linux/core/3/x86_64/os/Fedora/RPMS/"
             ;;
         *)
             die "Arch $ARCH is unsupported"
             ;;
     esac
 
-    if [ -n "$FIND_BEST_MIRROR" ]; then
-        trace "Finding best mirror- This will take a while"
-        # Find shortest speed
-        find_best_mirror $big_mirror_list
-        lowurl=$BEST_MIRROR
-    fi
+    set_mirrors $big_mirror_list
 
-    MIRROR=$lowurl
+    #if [ -n "$FIND_BEST_MIRROR" ]; then
+    #    trace "Finding best mirror- This will take a while"
+        # Find shortest speed
+    #    find_best_mirror $big_mirror_list
+    #    lowurl=$BEST_MIRROR
+    #fi
+
+    #MIRROR=$lowurl
 }
 
 work_out_rpms() {
