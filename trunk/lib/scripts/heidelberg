@@ -4,8 +4,7 @@
 # New segments of code and modifications made by
 # Sam Hart.
 
-# Portions Copyright 2004 Progeny Linux Systems, Inc.
-# Portions Copyright 2005 Sam Hart
+# Copyright 2004 Progeny Linux Systems, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,11 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# Author: Sam Hart
 
 work_out_mirror() {
-    #local try_best="$1"
     local big_mirror_list=""
-    #local lowurl=""
     trace "Checking for $ARCH arch"
     case $ARCH in
         i[3456]86)
@@ -37,7 +36,6 @@ http://mirrors.xmission.com/fedora/core/3/i386/os/Fedora/RPMS/
 http://redhat.secsup.org/fedora/core/3/i386/os/Fedora/RPMS/
 EOF
             )
-            #lowurl="http://download.fedora.redhat.com/pub/fedora/linux/core/3/i386/os/Fedora/RPMS/"
             ;;
         "x86_64")
             big_mirror_list=$(cat <<EOF
@@ -49,7 +47,6 @@ http://mirrors.xmission.com/fedora/core/3/x86_64/os/Fedora/RPMS/
 http://redhat.secsup.org/fedora/core/3/x86_64/os/Fedora/RPMS/
 EOF
             )
-            #lowurl="http://download.fedora.redhat.com/pub/fedora/linux/core/3/x86_64/os/Fedora/RPMS/"
             ;;
         *)
             die "Arch $ARCH is unsupported"
@@ -57,15 +54,6 @@ EOF
     esac
 
     set_mirrors $big_mirror_list
-
-    #if [ -n "$FIND_BEST_MIRROR" ]; then
-    #    trace "Finding best mirror- This will take a while"
-        # Find shortest speed
-    #    find_best_mirror $big_mirror_list
-    #    lowurl=$BEST_MIRROR
-    #fi
-
-    #MIRROR=$lowurl
 }
 
 work_out_rpms() {
@@ -284,11 +272,6 @@ print_rpms() {
 
 install_rpms() {
     local rpms_to_get=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
-    #local rpms_to_get=""
-    #for a in $rpm_list
-    #do
-    #    rpms_to_get=$rpms_to_get"${MIRROR%/}/$a "
-    #done
     get_rpms $rpms_to_get
 
     if [ "$DOWNLOAD_ONLY" = "" ]; then
