@@ -246,12 +246,12 @@ print_rpms() {
 }
 
 install_rpms() {
-    local rpm_list=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
-    local rpms_to_get=""
-    for a in $rpm_list
-    do
-        rpms_to_get=$rpms_to_get"${MIRROR%/}/$a "
-    done
+    local rpms_to_get=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
+    #local rpms_to_get=""
+    #for a in $rpm_list
+    #do
+    #    rpms_to_get=$rpms_to_get"${MIRROR%/}/$a "
+    #done
     get_rpms $rpms_to_get
 
     if [ "$DOWNLOAD_ONLY" = "" ]; then
@@ -268,6 +268,8 @@ install_rpms() {
 
         local passnum=0
 
+        cd $PKG_DIR
+
         while :; do
             trace "Installing pass number $passnum..."
             local pass=$(echo "$RPMS" | grep "^$passnum:" | sed 's/^[0-9]\+://')
@@ -280,6 +282,7 @@ install_rpms() {
                 # make sure each RPM exists
                 for RPM; do
                     if [ ! -e "$RPM" ]; then
+                        trace "Looking for $RPM"
                         die "cannot find required package $RPM"
                     fi
                 done
@@ -296,5 +299,6 @@ install_rpms() {
             fi
             passnum=$(( $passnum + 1 ))
         done
+        cd $PWD
     fi
 }

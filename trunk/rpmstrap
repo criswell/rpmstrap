@@ -20,7 +20,8 @@
 
 unset DEBUG JUST_PRINT_RPMS DOWNLOAD_ONLY ARCH || true
 unset UNPACK_TARBALL ADDITIONAL LIST_SUITES || true
-unset FIND_BEST_MIRROR BEST_MIRROR || true
+unset FIND_BEST_MIRROR BEST_MIRROR LOCAL_SOURCE || true
+unset KEEP_TMP PKG_DIR || true
 
 TMP_DIR="/tmp/rpmstrap."
 TMP_DIR=${TMP_DIR}$(date +%j%H%M%S)
@@ -41,13 +42,15 @@ fi
 
 usage()
 {
-    echo "Usage: $PROGNAME [OPTION]... <suite> <target> [<mirror> [<script>]]"
+    echo "Usage: $PROGNAME [OPTION]... <suite> <target> [<mirror>]"
     echo "Bootstrap RPM-based systems."
     echo
     cat <<EOF
       --arch                 set the target architecture (use if no uname)
                                [ --arch x86_64 ]
       --download-only        download packages, but don't perform installation
+      --local-source         specify a local source directory for RPMS
+                               [ --local-source /home/sam/rpm ]
       --print-rpms           print the packages to be installed, and exit
       --unpack-tarball       acquire .rpms from a tarball instead of http
       --list-suites          list the available suites this program knows
@@ -87,6 +90,14 @@ if [ $# != 0 ] ; then
             --arch)
                 if [ -n "$2" ] ; then
                     ARCH="$2"
+                    shift 2
+                else
+                    die "option requires an argument $1"
+                fi
+                ;;
+            --local-source)
+                if [ -n "$2" ]; then
+                    LOCAL_SOURCE="${2%/}"
                     shift 2
                 else
                     die "option requires an argument $1"
@@ -154,8 +165,13 @@ else
 
     . $SCRIPT
 
-    trace "Working out mirror"
-    work_out_mirror
+    if [ -n "$3" ]; then
+        trace "Using mirror $3"
+        MIRROR=$3
+    else
+        trace "Working out mirror"
+        work_out_mirror
+    fi
 
     trace "Work out RPMS"
     work_out_rpms

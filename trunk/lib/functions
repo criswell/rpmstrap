@@ -22,20 +22,35 @@ die () {
 
 get_rpms() {
     # Takes array of rpms to obtain
-    setup_env
-    cd $TMP_DIR
     local verbose="-q"
     if [ -n "$DEBUG" ]; then
         verbose=""
     fi
-    
-    for a in $@
-    do
-        wget $verbose $a
-    done
-    cd $PWD
-    if [ -n "$DOWNLOAD_ONLY" ]; then
-        mv $TMP_DIR $TARGET
+
+    PKG_DIR=$TMP_DIR
+
+    if [ -n "$LOCAL_SOURCE" ]; then
+        trace "get_rpms(): Using $LOCAL_SOURCE for RPMS"
+        for a in $@
+        do
+            if [ ! -f "$LOCAL_SOURCE/$a" ]; then
+                die "$a not found at $LOCAL_SOURCE"
+            fi
+        done
+        PKG_DIR=$LOCAL_SOURCE
+        KEEP_TMP="yes"
+    else
+        trace "get_rpms(): Getting RPMS from $MIRROR"
+        setup_env
+        cd $TMP_DIR
+        for a in $@
+        do
+            wget $verbose ${MIRROR%/}/$a
+        done
+        cd $PWD
+        if [ -n "$DOWNLOAD_ONLY" ]; then
+            mv $TMP_DIR $TARGET
+        fi
     fi
 }
 
