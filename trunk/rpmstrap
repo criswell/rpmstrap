@@ -36,7 +36,7 @@ PWD=${PWD%/}
 ARCH=$(uname -m)
 
 if [ "$RPMSTRAP_DIR" = "" ]; then
-    RPMSTRAP_DIR=./lib
+    RPMSTRAP_DIR=/usr/lib/rpmstrap
 fi
 
 . $RPMSTRAP_DIR/functions
