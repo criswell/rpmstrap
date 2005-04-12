@@ -197,9 +197,7 @@ else
         print_rpms
     else
         trace "Install RPMS"
-        if [ "$DOWNLOAD_ONLY" = "" ]; then
-            install_rpms
-        fi
+        install_rpms
         trace "Done"
         cleanup_env
     fi
