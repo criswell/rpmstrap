@@ -236,55 +236,5 @@ print_rpms() {
 }
 
 install_rpms() {
-    local rpms_to_get=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
-
-    get_rpms $rpms_to_get
-
-    if [ "$DOWNLOAD_ONLY" = "" ]; then
-        if [ $(id -u) -ne 0 ]; then
-            die "must have root privileges to create chroot"
-        fi
-
-        trace "creating chroot directory"
-        if [ -e "$TARGET" ]; then
-            die "chroot directory $TARGET already exists; aborting"
-        fi
-
-        mkdir -p "$TARGET/var/lib/rpm"
-
-        local passnum=0
-
-        cd $PKG_DIR
-
-        while :; do
-            trace "Installing pass number $passnum..."
-            local pass=$(echo "$RPMS" | grep "^$passnum:" | sed 's/^[0-9]\+://')
-            if [ -z "$pass" ]; then
-                trace "...nothing left to do."
-                break
-            else
-                set -- $pass
-
-                # make sure each RPM exists
-                for RPM; do
-                    if [ ! -e "$RPM" ]; then
-                        trace "Looking for $RPM"
-                        die "cannot find required package $RPM"
-                    fi
-                done
-
-                # rpm insists on having an absolute path to its --root option's argument
-                if ! expr "$TARGET" : "/" >/dev/null 2>&1; then
-                    TARGET="$PWD/$TARGET"
-                fi
-                trace "Installing $* to $TARGET..."
-                if ! rpm --install --root "$TARGET" $@; then
-                    die "command \"rpm --install --root $TARGET $*\"" \
-                    "failed"
-                fi
-            fi
-            passnum=$(( $passnum + 1 ))
-        done
-        cd $PWD
-    fi
+    install_by_pass $RPMS
 }
