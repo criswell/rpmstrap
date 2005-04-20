@@ -136,9 +136,6 @@ find_best_mirror() {
 }
 
 setup_env() {
-    if [ -e "$TARGET" ]; then
-        warn "chroot directory $TARGET already exists"
-    fi
     cleanup_env
     mkdir -p $TMP_DIR
 }
@@ -190,7 +187,7 @@ install_by_pass() {
 
         trace "creating chroot directory"
         if [ -e "$TARGET" ]; then
-            die "chroot directory $TARGET already exists; aborting"
+            warn "chroot directory $TARGET already exists"
         fi
 
         mkdir -p "$TARGET/var/lib/rpm"
