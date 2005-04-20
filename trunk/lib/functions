@@ -182,7 +182,7 @@ install_by_pass() {
 
     if [ "$DOWNLOAD_ONLY" = "" ]; then
         if [ $(id -u) -ne 0 ]; then
-            die "must have root privileges to create chroot"
+            die "must have root privileges to create target"
         fi
 
         trace "creating target directory"
