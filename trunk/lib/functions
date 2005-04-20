@@ -137,7 +137,7 @@ find_best_mirror() {
 
 setup_env() {
     if [ -e "$TARGET" ]; then
-        die "chroot directory $TARGET already exists; aborting"
+        warn "chroot directory $TARGET already exists"
     fi
     cleanup_env
     mkdir -p $TMP_DIR
