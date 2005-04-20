@@ -24,8 +24,11 @@ unset FIND_BEST_MIRROR BEST_MIRROR LOCAL_SOURCE || true
 unset KEEP_TMP PKG_DIR MIRROR_LIST TRY_MIRRORS || true
 unset MIRROR || true
 
-TMP_DIR="/tmp/rpmstrap."
-TMP_DIR=${TMP_DIR}$(date +%j%H%M%S)
+if [ "$TMP_DIR" = "" ]; then
+    TMP_DIR="/tmp/rpmstrap."
+    TMP_DIR=${TMP_DIR}$(date +%j%H%M%S)
+fi
+
 PROGNAME=${0##*/}
 PWD=$(pwd)
 PWD=${PWD%/}
@@ -172,7 +175,12 @@ else
     trace "Preparing variables"
 
     RPMSUITE=$1
-    TARGET=$PWD/$2
+    
+    if [ "$2" = "${2##\/}" ]; then
+        TARGET=$PWD/$2
+    else
+        TARGET=$2
+    fi
     TARGET=${TARGET%/}
 
     SCRIPT="$RPMSTRAP_DIR/scripts/$RPMSUITE"

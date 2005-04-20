@@ -45,6 +45,7 @@ get_rpms() {
         cd $TMP_DIR
         for a in $@
         do
+            sleep .5s
             if [ -n "$MIRROR" ]; then
                 trace "get_rpms(): Getting RPM from $MIRROR"
                 wget $verbose ${MIRROR%/}/$a
