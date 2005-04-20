@@ -185,9 +185,9 @@ install_by_pass() {
             die "must have root privileges to create chroot"
         fi
 
-        trace "creating chroot directory"
+        trace "creating target directory"
         if [ -e "$TARGET" ]; then
-            warn "chroot directory $TARGET already exists"
+            warn "target directory $TARGET already exists"
         fi
 
         mkdir -p "$TARGET/var/lib/rpm"
