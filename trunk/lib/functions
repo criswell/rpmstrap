@@ -42,6 +42,10 @@ get_rpms() {
         KEEP_TMP="yes"
     elif [ -n "$UNPACK_TARBALL" ]; then
         trace "get_rpms(): Using $UNPACK_TARBALL for RPMS"
+        if [ ! -n "$TARBALL_STRIP_DEPTH" ]; then
+            warn "When unpacking from tarball, it is generally advisable to specify a '--strip-path'."
+            warn "If you have any troubles, read the info pages on tar and try a '--strip-path'."
+        fi
         for a in $@
         do
             if [ ! -f "$TMP_DIR/$a" ]; then
@@ -158,10 +162,10 @@ setup_env() {
         fi
         if [ "${UNPACK_TARBALL%.tar}" != "$UNPACK_TARBALL" ]; then
             trace "Normal tarball"
-            (cd "$TMP_DIR" && tar x${noisy}f "$UNPACK_TARBALL")
+            (cd "$TMP_DIR" && tar -x${noisy} $TARBALL_STRIP_DEPTH -f "$UNPACK_TARBALL")
         elif [ "${UNPACK_TARBALL%.tgz}" != "$UNPACK_TARBALL" ]; then
             trace "Gzipped tarball"
-            (cd "$TMP_DIR" && zcat "$UNPACK_TARBALL" | tar x${noisy}f -)
+            (cd "$TMP_DIR" && zcat "$UNPACK_TARBALL" | tar x${noisy} $TARBALL_STRIP_DEPTH -f -)
         else
             die "Unknown tarball: must be either .tar or .tgz"
         fi
