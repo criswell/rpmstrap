@@ -23,6 +23,7 @@ unset UNPACK_TARBALL ADDITIONAL LIST_SUITES || true
 unset FIND_BEST_MIRROR BEST_MIRROR LOCAL_SOURCE || true
 unset KEEP_TMP PKG_DIR MIRROR_LIST TRY_MIRRORS || true
 unset MIRROR WGET_DELAY TARBALL_STRIP_DEPTH || true
+unset FORCE_RPM || true
 
 if [ "$TMP_DIR" = "" ]; then
     TMP_DIR="/tmp/rpmstrap."
@@ -78,6 +79,9 @@ usage()
                                sequentially all of the mirrors in the event of
                                a failure
 
+      --force                force installation of RPMs even if there are
+                               errors
+
       --help                 display this help and exit
 
       --include=A,B,C        adds specified names to the list of base packages
@@ -121,7 +125,10 @@ if [ $# != 0 ] ; then
                     die "option requires an argument $1"
                 fi
                 ;;
-
+            --force)
+                FORCE_RPM=yes
+                shift
+                ;;
             --delay)
                 if [ -n "$2" ]; then
                     WGET_DELAY="$2"

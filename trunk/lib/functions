@@ -212,6 +212,11 @@ install_by_pass() {
     local rpms_to_get=$(echo "$RPMS_LIST" | sed "s/[[:digit:]]\+://")
     get_rpms $rpms_to_get
 
+    local rpm_force_opt=""
+    if [ -n "$FORCE_RPM" ]; then
+        rpm_force_opt="--force --nodeps"
+    fi
+
     if [ "$DOWNLOAD_ONLY" = "" ]; then
         if [ $(id -u) -ne 0 ]; then
             die "must have root privileges to create target"
@@ -249,8 +254,8 @@ install_by_pass() {
                     TARGET="$PWD/$TARGET"
                 fi
                 trace "Installing $* to $TARGET..."
-                if ! rpm --install --root "$TARGET" $@; then
-                    die "command \"rpm --install --root $TARGET $*\"" \
+                if ! rpm --install $rpm_force_opt --root "$TARGET" $@; then
+                    die "command \"rpm --install $rpm_force_opt --root $TARGET $*\"" \
                     "failed"
                 fi
             fi
