@@ -23,7 +23,7 @@ die () {
 get_rpms() {
     # Takes array of rpms to obtain
     local verbose="-q"
-    
+
     if [ -n "$DEBUG" ]; then
         verbose=""
     fi
@@ -40,6 +40,15 @@ get_rpms() {
         done
         PKG_DIR=$LOCAL_SOURCE
         KEEP_TMP="yes"
+    elif [ -n "$UNPACK_TARBALL" ]; then
+        trace "get_rpms(): Using $UNPACK_TARBALL for RPMS"
+        for a in $@
+        do
+            if [ ! -f "$TMP_DIR/$a" ]; then
+                die "$a not found inside $UNPACK_TARBALL"
+            fi
+        done
+        PKG_DIR=$TMP_DIR
     else
         setup_env
         cd $TMP_DIR
@@ -92,7 +101,7 @@ get_rpms_fuzzy() {
     if [ -n "$DEBUG" ]; then
         verbose=""
     fi
-    
+
     for a in $@
     do
         wget $verbose -v -r -nH -nd --no-parent -l inf -A ""$a-*"" $RPM_URL
@@ -138,8 +147,25 @@ find_best_mirror() {
 }
 
 setup_env() {
+    trace "setup_env()"
     cleanup_env
     mkdir -p $TMP_DIR
+    if [ -n "$UNPACK_TARBALL" ]; then
+        trace "Using $UNPACK_TARBALL for RPMS"
+        local noisy=""
+        if [ -n "$DEBUG" ]; then
+            noisy="v"
+        fi
+        if [ "${UNPACK_TARBALL%.tar}" != "$UNPACK_TARBALL" ]; then
+            trace "Normal tarball"
+            (cd "$TMP_DIR" && tar x${noisy}f "$UNPACK_TARBALL")
+        elif [ "${UNPACK_TARBALL%.tgz}" != "$UNPACK_TARBALL" ]; then
+            trace "Gzipped tarball"
+            (cd "$TMP_DIR" && zcat "$UNPACK_TARBALL" | tar x${noisy}f -)
+        else
+            die "Unknown tarball: must be either .tar or .tgz"
+        fi
+    fi
 }
 
 cleanup_env() {
@@ -158,7 +184,7 @@ set_mirrors() {
     else
         MIRROR_LIST=$1
     fi
-    
+
     if [ -n "$FIND_BEST_MIRROR" ]; then
         trace "Finding best mirror- This will take a while"
         # Find shortest speed

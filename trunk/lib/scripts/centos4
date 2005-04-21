@@ -241,7 +241,7 @@ esac
 
 print_rpms() {
     local rpm_list=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
-    
+
     echo "RPMs for suite $RPMSUITE and arch $ARCH"
     for a in $rpm_list
     do
