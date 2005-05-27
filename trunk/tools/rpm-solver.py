@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 # rpm-solver.py
-#  Given a pile of RPMs with dependency closure, will attempt to figure out
+#  Given a pile of RPMs will check dependency closure, will attempt to figure out
 # their installation order.
 
 import os
@@ -91,15 +91,6 @@ class rpm_solver:
 
         order_pkg = []
         order_filename = []
-        #i = 0
-
-        #try:
-            # Start off with holy crap!
-        #    for header in self.solver_db.rpmdb:
-                #self.solver_db.ts
-        #        print
-        #except:
-        #    traceback.print_exc()
 
         self.solver_db.ts.order()
         while 1:
