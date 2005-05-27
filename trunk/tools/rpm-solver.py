@@ -11,12 +11,52 @@ import sys
 import getopt
 import rpm
 import traceback
+import threading
+import time
+
+class SpinnyThing(threading.Thread):
+    def __init__(self, prefix="Running: "):
+        threading.Thread.__init__(self)
+        self.spinner = ["|", "/", "-", "\\"]
+        self.prefix = prefix
+        self.position = 0
+        self.length = len(self.spinner)
+        self.running = False
+    def run(self):
+        self.running = True
+        while self.running == True:
+            print>>sys.stderr, " %s%s \r" % (self.prefix, self.spinner[self.position]),
+            self.position = (self.position + 1) % self.length
+            time.sleep(0.2)
+    def stop(self):
+        length = len(self.prefix) + 2
+        max_spin_len = 0
+        for element in spinner:
+            if len(element) > max_spin_len:
+                max_spin_len = len(element)
+
+        for i in range(length + max_spin_len):
+            print>>sys.stderr, " ",
+        print "\r"
+        self.running = False
 
 class rpm_solver:
     def __init__(self, progress=0, verbose=0):
         self.progress = progress
         self.verbose = verbose
         self._initdb = 0
+
+    def with_spinner(prefix, function):
+        def _inner(*args, **kwargs):
+            result = None
+            spinner = SpinnyThing(prefix)
+            try:
+                spinner.start()
+                result =  function(*args, **kwargs)
+            finally:
+                spinner.stop()
+            return result
+        return _inner
 
     def init_db(self, rpm_dir, avail_dir=None, recursive=0):
         """ Init the database """
@@ -31,6 +71,7 @@ class rpm_solver:
             self.avail_db = self.db(avail_dir, recursive)
             self.avail_db.populate_db(self.verbose, 0)
             self.use_avail = 1
+    init_db = with_spinner("Populating DB : ", init_db)
 
     def what_provides(self, solver_db, name, version=None):
         """ Given a name and a version, see what provides it """
