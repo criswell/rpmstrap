@@ -230,6 +230,7 @@ EOF
 52:centos-yumconf-4-2.noarch.rpm
 52:yum-2.2.0-1.centos4.2.noarch.rpm
 53:nano-1.2.4-1.i386.rpm
+54:passwd-0.68-10.i386.rpm
 EOF
             )
             ;;
