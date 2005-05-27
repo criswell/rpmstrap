@@ -168,7 +168,7 @@ class rpm_solver:
 
             return arg.results
 
-def process(rpm_dir, solve_dir, recursive, progress, verbose):
+def process(rpm_dir, solve_dir, check_only, recursive, progress, verbose):
     """ Main process if ran from command line """
 
     solver = rpm_solver(progress, verbose)
@@ -182,10 +182,12 @@ def process(rpm_dir, solve_dir, recursive, progress, verbose):
     if len(problems):
         print "Error! The following problems were encountered:\n"
         for pkg in problems:
-            print "\t" + pkg
+            print "\t" + str(pkg)
 
     if len(problems) or len(needed):
         sys.exit(2)
+    elif check_only:
+        print ("The RPMs in %s have dependency closure" % rpm_dir)
     else:
         # Okay we do stuff
         ordered = solver.order_solver()
@@ -201,6 +203,7 @@ def usage():
     print "\nUSAGE:"
     print "     rpm-solver.py [options] <RPM_DIR>"
     print "\nWhere [options] may be one of the following:"
+    print "\t-c | --check\tCheck for dependency closure only"
     print "\t-s | --solve\tUse the pool of rpms specified for solving"
     print "\t-v | --verbose\tBe verbose in processing"
     print "\t-p | --progress\tUse progress bar"
@@ -210,7 +213,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "vprs:", ["verbose", "progress", "recursive", "solve="])
+        opts, args = getopt.getopt(sys.argv[1:], "vprs:c", ["verbose", "progress", "recursive", "solve=", "check"])
     except getopt.GetoptError:
         # print help information and exit:
         usage()
@@ -220,6 +223,7 @@ def main():
     progress = 0
     recursive = 0
     solve_dir = None
+    check_only = 0
 
     if len(sys.argv) < 2:
         usage()
@@ -240,7 +244,10 @@ def main():
         if o in ("-s", "--solve"):
             solve_dir = a
 
-    process(rpm_dir, solve_dir, recursive, progress, verbose)
+        if o in ("-c", "--check"):
+            check_only = 1
+
+    process(rpm_dir, solve_dir, check_only, recursive, progress, verbose)
 
 if __name__ == "__main__":
     main()
