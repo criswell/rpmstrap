@@ -12,8 +12,6 @@ import getopt
 import rpm
 import traceback
 import commands
-#import threading
-#import time
 
 class progress_bar:
     def __init__(self, prefix="Progress :", prog_char="-", col=60, outnode=sys.stdout):
