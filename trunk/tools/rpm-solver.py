@@ -11,67 +11,86 @@ import sys
 import getopt
 import rpm
 import traceback
-import threading
-import time
+import commands
+#import threading
+#import time
 
-class SpinnyThing(threading.Thread):
-    def __init__(self, prefix="Running: "):
-        threading.Thread.__init__(self)
+class progress_bar:
+    def __init__(self, prefix="Progress :", prog_char="-", col=60, outnode=sys.stdout):
+        self.f = outnode
+        self.prog_char = prog_char
+        self.col = col
         self.spinner = ["|", "/", "-", "\\"]
+        self.spin_count = 0
         self.prefix = prefix
-        self.position = 0
-        self.length = len(self.spinner)
-        self.running = False
-    def run(self):
-        self.running = True
-        while self.running == True:
-            print>>sys.stderr, " %s%s \r" % (self.prefix, self.spinner[self.position]),
-            self.position = (self.position + 1) % self.length
-            time.sleep(0.2)
-    def stop(self):
-        length = len(self.prefix) + 2
-        max_spin_len = 0
-        for element in spinner:
-            if len(element) > max_spin_len:
-                max_spin_len = len(element)
 
-        for i in range(length + max_spin_len):
-            print>>sys.stderr, " ",
-        print "\r"
-        self.running = False
+    def set(self, prefix="Progress :"):
+        self.prefix = prefix
+
+    def clear(self):
+        self.f.write("\r")
+        for i in range(0, self.col):
+            self.f.write(" ")
+
+        self.f.write("\r")
+        self.f.flush()
+
+    def progress(self, percentage):
+        """Count must be out of 100%"""
+
+        if percentage > 1.0:
+            percentage = 1.0
+
+        self.f.write(("\r%s 0 |") % self.prefix)
+        width = self.col - len(("\r%s 0  100 |") % self.prefix) + 1
+        count = width * percentage
+
+        i = 1
+        while i < count:
+            self.f.write(self.prog_char)
+            i = i + 1
+
+        if count < width:
+            self.f.write(">")
+            while i < width:
+                self.f.write(" ")
+                i = i + 1
+
+        if self.spin_count >= len(self.spinner):
+            self.spin_count = 0
+
+        self.f.write(self.spinner[self.spin_count])
+        self.spin_count = self.spin_count + 1
+
+        self.f.write(" 100  ")
+        self.f.flush()
 
 class rpm_solver:
     def __init__(self, progress=0, verbose=0):
         self.progress = progress
         self.verbose = verbose
         self._initdb = 0
+        col = commands.getoutput("echo \"$COLUMNS\"")
+        try:
+            columns = int(col)
+        except:
+            columns = 60
+        self.pb = progress_bar("rpm_solver :", "-", columns, sys.stderr)
 
-    def with_spinner(prefix, function):
-        def _inner(*args, **kwargs):
-            result = None
-            spinner = SpinnyThing(prefix)
-            try:
-                spinner.start()
-                result =  function(*args, **kwargs)
-            finally:
-                spinner.stop()
-            return result
-        return _inner
 
     def init_db(self, rpm_dir, avail_dir=None, recursive=0):
         """ Init the database """
 
         self.solver_db = self.db(rpm_dir, recursive)
-        self.solver_db.populate_db(self.verbose)
+        self.solver_db.populate_db(self.verbose, self.pb, 1, self.progress)
 
         self.use_avail = 0
         self._initdb = 1
 
         if avail_dir:
             self.avail_db = self.db(avail_dir, recursive)
-            self.avail_db.populate_db(self.verbose, 0)
+            self.avail_db.populate_db(self.verbose, self.pb, 0, self.progress)
             self.use_avail = 1
-    init_db = with_spinner("Populating DB : ", init_db)
 
     def what_provides(self, solver_db, name, version=None):
         """ Given a name and a version, see what provides it """
@@ -156,14 +175,26 @@ class rpm_solver:
         def get_rpmdb_size(self):
             return len(self.rpmdb)
 
-        def populate_db(self, verbose, pop_trans=1):
+        def populate_db(self, verbose, pb, pop_trans=1, progress=0):
             """ Populate our own DB :-)"""
 
             self.rpm_filenames = self._list_files()
 
+            i = 0.0
+            if progress:
+                pb.set("Populate RPMDB :")
+
             for filename in self.rpm_filenames:
                 if verbose: print "rpm_solver.db.populate_db : Adding " + str(filename)
+                if progress:
+                    i = i + 1.0
+                    percent = i / len(self.rpm_filenames)
+                    pb.progress(percent)
+
                 self.add(filename, pop_trans)
+
+            if progress:
+                pb.clear()
 
         def add(self, filename, pop_trans=1):
             try:
