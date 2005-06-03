@@ -30,6 +30,7 @@ import getopt
 import rpm
 import traceback
 import commands
+import tempfile
 
 class progress_bar:
     def __init__(self, prefix="Progress :", prog_char="-", col=60, outnode=sys.stdout):
@@ -114,7 +115,12 @@ class rpm_solver:
         for hdr_key in solver_db.rpmdb.keys():
             provides = solver_db.rpmdb[hdr_key][rpm.RPMTAG_PROVIDES]
             if name in provides:
-                return hdr_key
+                if version:
+                    version_check = solver_db.rpmdb[hdr_key][rpm.RPMTAG_VERSION]
+                    if version == version_check:
+                        return hdr_key
+                else:
+                    return hdr_key
             file_list = solver_db.rpmdb[hdr_key][rpm.RPMTAG_FILENAMES]
             if name in file_list:
                 return hdr_key
@@ -129,13 +135,16 @@ class rpm_solver:
 
         if self._initdb:
             missing_deps = self.solver_db.ts.check()
+            if self.verbose > 1:
+                print "->Result of solver_db.ts.check():"
+                print missing_deps
             if len(missing_deps):
                 for dep in missing_deps:
                     # XXX FIXME
                     # Okay, we completely ignore the version here, which is
                     # wrong wrong WRONG! We should be smacked.
                     if self.use_avail:
-                        package = self.what_provides(self.avail_db, dep[1][0])
+                        package = self.what_provides(self.avail_db, dep[1][0], dep[1][1])
                         if package:
                             needed.append(package)
                         else:
@@ -175,6 +184,8 @@ class rpm_solver:
             except:
                 break
 
+        #order_pkg = self.solver_db.ts()
+
         for pkg in order_pkg:
             order_filename.append(self._get_filename_from_hdr(pkg))
 
@@ -186,7 +197,17 @@ class rpm_solver:
             self.recurse = recurse
             self.rpmdb = {}
             self.ext = ext
-            self.ts = rpm.TransactionSet()
+            self.tmp_dir = tempfile.mkdtemp()
+            self.ts = rpm.TransactionSet(self.tmp_dir)
+            self.ts.setVSFlags(rpm._RPMVSF_NOSIGNATURES)
+
+        def close(self):
+            self.ts.closeDB()
+            for root, dirs, files in os.walk(self.tmp_dir, topdown=False):
+                for name in files:
+                    os.remove(os.path.join(root, name))
+                for name in dirs:
+                    os.rmdir(os.path.join(root, name))
 
         def get_rpmdb_size(self):
             return len(self.rpmdb)
@@ -212,17 +233,49 @@ class rpm_solver:
             if progress:
                 pb.clear()
 
+            if verbose > 1:
+                print ("->The contents of this transaction set for %s:" % self.rpm_dir)
+                for tx in self.ts:
+                    print tx
+
         def add(self, filename, pop_trans=1):
+            if filename.startswith("http://"):
+                # XXX FIXME:
+                # Okay, I give up about doing this nicely. Screw it.
+                tmpfile = tempfile.mktemp()
+                problem = 0
+                while 1:
+                    output = commands.getoutput("wget -O %s %s" % (tmpfile, filename))
+                    try:
+                        fdno = os.open(tmpfile, os.O_RDONLY)
+                        os.close(fdno)
+                        break
+                    except:
+                        if problem > 10:
+                            print "FATAL ERROR!"
+                            print "Could not download " + filename
+                            sys.exit(2)
+                        else:
+                            problem = problem + 1
+                localfile = tmpfile
+            else:
+                localfile = filename
+
             try:
                 fname = filename.split("/")[-1]
             except:
                 fname = filename
-            fdno = os.open(filename, os.O_RDONLY)
+
+            fdno = os.open(localfile, os.O_RDONLY)
             hdr = self.ts.hdrFromFdno(fdno)
-            self.rpmdb[fname] = hdr
             os.close(fdno)
+
+            self.rpmdb[fname] = hdr
             if pop_trans:
                 self.ts.addInstall(hdr,None)
+
+            if filename.startswith("http://"):
+                os.unlink(tmpfile)
 
         def _list_files(self):
             """List all the files in a directory"""
@@ -232,29 +285,33 @@ class rpm_solver:
             recurse = self.recurse
             return_folders = 0
 
-            # Expand patterns from semicolon-separated string to list
-            pattern_list = patterns.split(';')
+            if root.startswith("http://"):
+                output = commands.getoutput("links -dump %s | grep \"http://\" | grep \".rpm\" | awk '{print $2}'" % root)
+                results = output.split("\n")
+                return results
+            else:
+                # Expand patterns from semicolon-separated string to list
+                pattern_list = patterns.split(';')
 
-            class Bunch:
-                def __init__(self, **kwds): self.__dict__.update(kwds)
-            arg = Bunch(recurse=recurse, pattern_list=pattern_list, return_folders=return_folders, results=[])
+                class Bunch:
+                    def __init__(self, **kwds): self.__dict__.update(kwds)
+                arg = Bunch(recurse=recurse, pattern_list=pattern_list, return_folders=return_folders, results=[])
 
-            def visit(arg, dirname, files):
-                # Append to arg.results all relevant files
-                for name in files:
-                    fullname = os.path.normpath(os.path.join(dirname, name))
-                    fullname = fullname.rstrip()
-                    if arg.return_folders or os.path.isfile(fullname):
-                        for pattern in arg.pattern_list:
-                            if fnmatch.fnmatch(name, pattern):
-                                arg.results.append(fullname)
-                                break
-                # Block recursion if disallowed
-                if not arg.recurse: files[:]=[]
+                def visit(arg, dirname, files):
+                    # Append to arg.results all relevant files
+                    for name in files:
+                        fullname = os.path.normpath(os.path.join(dirname, name))
+                        fullname = fullname.rstrip()
+                        if arg.return_folders or os.path.isfile(fullname):
+                            for pattern in arg.pattern_list:
+                                if fnmatch.fnmatch(name, pattern):
+                                    arg.results.append(fullname)
+                                    break
+                    # Block recursion if disallowed
+                    if not arg.recurse: files[:]=[]
 
-            os.path.walk(root, visit, arg)
-
-            return arg.results
+                os.path.walk(root, visit, arg)
+                return arg.results
 
 def process(rpm_dir, solve_dir, check_only, recursive, progress, verbose):
     """ Main process if ran from command line """
@@ -321,7 +378,7 @@ def main():
 
     for o, a in opts:
         if o in ("-v", "--verbose"):
-            verbose = 1
+            verbose = verbose + 1
 
         if o in ("-p", "--progress"):
             progress = 1
@@ -334,6 +391,8 @@ def main():
 
         if o in ("-c", "--check"):
             check_only = 1
+
+    if verbose > 1: print "WARNING: Excessive debugging"
 
     process(rpm_dir, solve_dir, check_only, recursive, progress, verbose)
 
