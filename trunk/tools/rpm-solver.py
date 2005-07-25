@@ -313,7 +313,7 @@ class rpm_solver:
                 os.path.walk(root, visit, arg)
                 return arg.results
 
-def process(rpm_dir, solve_dir, check_only, recursive, progress, verbose):
+def process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verbose):
     """ Main process if ran from command line """
 
     solver = rpm_solver(progress, verbose)
@@ -324,6 +324,17 @@ def process(rpm_dir, solve_dir, check_only, recursive, progress, verbose):
         print "Error! The following packages are needed for dependency closure:\n"
         for pkg in needed:
             print "\t" + str(pkg)
+
+        if yes_solve or raw_input("Solve for dependency? (y/N): ") in ("y", "yes", "Y"):
+            final_needed = []
+            for pkg in needed:
+                if not pkg in final_needed:
+                    final_needed.append(pkg)
+
+            for pkg in final_needed:
+                from_file = solve_dir + "/" + pkg
+                print "cp -f " + from_file + " " + rpm_dir
+
     if len(problems):
         print "Error! The following problems were encountered:\n"
         for pkg in problems:
@@ -350,6 +361,7 @@ def usage():
     print "\nWhere [options] may be one of the following:"
     print "\t-c | --check\tCheck for dependency closure only"
     print "\t-s | --solve\tUse the pool of rpms specified for solving"
+    print "\t-y | --yes\tAssume 'y' when -s can solve for dependency"
     print "\t-v | --verbose\tBe verbose in processing"
     print "\t-p | --progress\tUse progress bar"
     print "\t-r | --recursive\tScan RPM_DIR recursively"
@@ -358,7 +370,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "vprs:c", ["verbose", "progress", "recursive", "solve=", "check"])
+        opts, args = getopt.getopt(sys.argv[1:], "vprs:cu", ["verbose", "progress", "recursive", "solve=", "check", "yes"])
     except getopt.GetoptError:
         # print help information and exit:
         usage()
@@ -369,6 +381,7 @@ def main():
     recursive = 0
     solve_dir = None
     check_only = 0
+    yes_solve = 0
 
     if len(sys.argv) < 2:
         usage()
@@ -392,9 +405,12 @@ def main():
         if o in ("-c", "--check"):
             check_only = 1
 
+        if o in ("-y", "--yes"):
+            yes_solve = 1
+
     if verbose > 1: print "WARNING: Excessive debugging"
 
-    process(rpm_dir, solve_dir, check_only, recursive, progress, verbose)
+    process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verbose)
 
 if __name__ == "__main__":
     main()
