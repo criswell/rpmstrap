@@ -112,8 +112,6 @@ class rpm_solver:
     def add(self, file):
         """ Add a new file to the solver db """
 
-        #print self.avail_db.rpm_filenames.keys()
-
         self.solver_db.add(self.avail_db.rpm_filenames[file])
 
     def what_provides(self, solver_db, name, version=None):
