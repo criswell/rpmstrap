@@ -105,6 +105,10 @@ if [ $# != 0 ] ; then
                 FIND_BEST_MIRROR=yes
                 shift
                 ;;
+            --try-mirrors)
+                TRY_MIRRORS=yes
+                shift
+                ;;
             --print-rpms)
                 JUST_PRINT_RPMS=yes
                 shift

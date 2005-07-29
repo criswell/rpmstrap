@@ -109,6 +109,13 @@ class rpm_solver:
             self.avail_db.populate_db(self.verbose, self.pb, 0, self.progress)
             self.use_avail = 1
 
+    def add(self, file):
+        """ Add a new file to the solver db """
+
+        #print self.avail_db.rpm_filenames.keys()
+
+        self.solver_db.add(self.avail_db.rpm_filenames[file])
+
     def what_provides(self, solver_db, name, version=None):
         """ Given a name and a version, see what provides it """
 
@@ -145,13 +152,13 @@ class rpm_solver:
                     # wrong wrong WRONG! We should be smacked.
                     if self.use_avail:
                         package = self.what_provides(self.avail_db, dep[1][0], dep[1][1])
-                        if package:
+                        if package and (not package in needed):
                             needed.append(package)
                         else:
                             problems.append("%s needs %s" % (dep[0][0], dep[1][0]))
                     else:
                         package = self.what_provides(self.solver_db, dep[1][0])
-                        if package:
+                        if package and (not package in needed):
                             needed.append(package)
                         else:
                             problems.append("%s needs %s" % (dep[0][0], dep[1][0]))
@@ -221,7 +228,8 @@ class rpm_solver:
             if progress:
                 pb.set("Populate RPMDB :")
 
-            for filename in self.rpm_filenames:
+            for name in self.rpm_filenames.keys():
+                filename = self.rpm_filenames[name]
                 if verbose: print "rpm_solver.db.populate_db : Adding " + str(filename)
                 if progress:
                     i = i + 1.0
@@ -295,7 +303,7 @@ class rpm_solver:
 
                 class Bunch:
                     def __init__(self, **kwds): self.__dict__.update(kwds)
-                arg = Bunch(recurse=recurse, pattern_list=pattern_list, return_folders=return_folders, results=[])
+                arg = Bunch(recurse=recurse, pattern_list=pattern_list, return_folders=return_folders, results={})
 
                 def visit(arg, dirname, files):
                     # Append to arg.results all relevant files
@@ -305,7 +313,7 @@ class rpm_solver:
                         if arg.return_folders or os.path.isfile(fullname):
                             for pattern in arg.pattern_list:
                                 if fnmatch.fnmatch(name, pattern):
-                                    arg.results.append(fullname)
+                                    arg.results[name] = fullname
                                     break
                     # Block recursion if disallowed
                     if not arg.recurse: files[:]=[]
@@ -319,21 +327,26 @@ def process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verb
     solver = rpm_solver(progress, verbose)
     solver.init_db(rpm_dir, solve_dir, recursive)
     needed, problems = solver.dep_closure()
+    solver_steps = []
 
-    if len(needed):
+    while len(needed):
         print "Error! The following packages are needed for dependency closure:\n"
         for pkg in needed:
             print "\t" + str(pkg)
 
-        if yes_solve or raw_input("Solve for dependency? (y/N): ") in ("y", "yes", "Y"):
-            final_needed = []
+        if yes_solve or (raw_input("Solve for dependency? (y/N): ") in ("y", "yes", "Y")):
             for pkg in needed:
-                if not pkg in final_needed:
-                    final_needed.append(pkg)
+                from_file = solver.avail_db.rpm_filenames[pkg]
+                solver_steps.append("cp -f %s %s" %(from_file, rpm_dir))
+                solver.add(pkg)
 
-            for pkg in final_needed:
-                from_file = solve_dir + "/" + pkg
-                print "cp -f " + from_file + " " + rpm_dir
+            needed, problems = solver.dep_closure()
+        else:
+            break
+
+    if len(solver_steps):
+        for line in solver_steps:
+            print line
 
     if len(problems):
         print "Error! The following problems were encountered:\n"
@@ -370,7 +383,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "vprs:cu", ["verbose", "progress", "recursive", "solve=", "check", "yes"])
+        opts, args = getopt.getopt(sys.argv[1:], "vprs:cuy", ["verbose", "progress", "recursive", "solve=", "check", "yes"])
     except getopt.GetoptError:
         # print help information and exit:
         usage()

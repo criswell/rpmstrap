@@ -72,7 +72,7 @@ get_rpms() {
                     for mir in $MIRROR_LIST
                     do
                         trace "get_rpms(): Getting RPM from $mir"
-                        wget $verbose ${MIRROR%/}/$a
+                        wget $verbose ${mir%/}/$a
                         if [ ! -f "$a" ]; then
                             break
                         fi
