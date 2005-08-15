@@ -5,6 +5,7 @@ LIBDIR=/usr/lib/rpmstrap
 DOCDIR=/usr/share/doc/rpmstrap-0.5
 
 cp -fr rpmstrap $BINDIR/.
+cp -fr tools/rpm-solver.py $BINDIR/.
 mkdir -p $LIBDIR
 cp -fr lib/functions $LIBDIR/.
 cp -fr lib/scripts $LIBDIR/.
