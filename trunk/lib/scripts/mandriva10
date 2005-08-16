@@ -163,8 +163,7 @@ print_rpms() {
 install_rpms() {
     local rpms_to_get=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
 
-    echo $rpms_to_get
-    echo "Huh?"
+    #echo $rpms_to_get
 
     get_rpms $rpms_to_get
 
