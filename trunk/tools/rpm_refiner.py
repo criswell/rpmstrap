@@ -60,7 +60,7 @@ def process(rpm_dir, recursive, progress, verbose):
     tmp_order = []
     while len(ordered):
         name = ordered.pop()
-        fullname = "%s/%s" % (name, rpm_dir)
+        fullname = "%s/%s" % (rpm_dir, name)
         if verbose:
             print "---------\nTrying %s" % fullname
         tmp_order.append(fullname)
