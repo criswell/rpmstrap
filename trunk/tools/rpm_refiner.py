@@ -75,10 +75,10 @@ def process(rpm_dir, recursive, progress, verbose):
             print status
             print output
         if not status:
-            new_oder.append(tmp_order)
+            new_order.append(tmp_order)
             tmp_order = []
 
-    for sub_order in new_oder:
+    for sub_order in new_order:
         for name in sub_order:
             print ("%d:%s" % (i, name))
         i = i + 1
