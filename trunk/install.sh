@@ -1,8 +1,19 @@
 #!/bin/sh
 
-BINDIR=/usr/bin
-LIBDIR=/usr/lib/rpmstrap
-DOCDIR=/usr/share/doc/rpmstrap-0.5
+VERSION=0.4
+
+if [ "$BINDIR" = "" ]; then
+    BINDIR=/usr/bin
+fi
+
+if [ "$LIBDIR" = "" ]; then
+    LIBDIR=/usr/lib/rpmstrap
+fi
+
+if [ "$DOCDIR" = "" ]; then
+    DOCDIR=/usr/share/doc
+fi
+DOCDIR=$DOCDIR/rpmstrap-$VERSION
 
 if [ $# != 0 ] ; then
     while true ; do
