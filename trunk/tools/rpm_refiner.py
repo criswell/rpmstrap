@@ -77,6 +77,7 @@ def process(rpm_dir, recursive, progress, verbose):
         if not status:
             new_order.append(tmp_order)
             tmp_order = []
+            allnames = ""
 
     for sub_order in new_order:
         for name in sub_order:
