@@ -79,6 +79,9 @@ def process(rpm_dir, recursive, progress, verbose):
             new_order.append(tmp_order)
             tmp_order = []
 
+    if len(tmp_order):
+        new_order.append(tmp_order)
+
     for sub_order in new_order:
         for name in sub_order:
             print ("%d:%s" % (i, name))
