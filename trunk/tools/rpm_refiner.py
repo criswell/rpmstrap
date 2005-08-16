@@ -60,13 +60,13 @@ def process(rpm_dir, recursive, progress, verbose):
     tmp_order = []
     while len(ordered):
         name = ordered.pop()
-        fullname = "%s/%s" % (rpm_dir, name)
+        tmp_order.append(name)
         if verbose:
-            print "---------\nTrying %s" % fullname
-        tmp_order.append(fullname)
+            print "---------\nTrying %s" % name
         allnames = ""
         for tmp_name in tmp_order:
-            allnames = "%s %s" % (allnames, tmp_name)
+            fullname = "%s/%s" % (rpm_dir, tmp_name)
+            allnames = "%s %s" % (allnames, fullname)
 
         cmd = "rpm --install --root %s %s" % (tmp_dir, allnames)
         if verbose > 1:
