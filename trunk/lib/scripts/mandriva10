@@ -255,6 +255,74 @@ EOF
 esac
 }
 
+mdk_install_by_pass() {
+    # Given a list of RPMs ordered by pass, will install them
+    # This is the basic install function provided by rpmstrap,
+    # if you need anything else above and beyond this, you
+    # will have to script it yourself.
+    local RPMS_LIST=$1
+    shift
+    for a in $@
+    do
+        RPMS_LIST=$(echo -e "$RPMS_LIST\n$a")
+    done
+    local rpms_to_get=$(echo "$RPMS_LIST" | sed "s/[[:digit:]]\+://")
+    get_rpms $rpms_to_get
+
+    # FIXME
+    # Horrible, I know, but these stupid Mandriva RPMs just refuse
+    # to behave.
+    local rpm_force_opt="--force --nodeps --noscripts"
+
+    if [ "$DOWNLOAD_ONLY" = "" ]; then
+        if [ $(id -u) -ne 0 ]; then
+            die "must have root privileges to create target"
+        fi
+
+        trace "creating target directory"
+        if [ -e "$TARGET" ]; then
+            warn "target directory $TARGET already exists"
+        fi
+
+        mkdir -p "$TARGET/var/lib/rpm"
+
+        local passnum=0
+
+        cd $PKG_DIR
+
+        while :; do
+            trace "Installing pass number $passnum..."
+            local pass=$(echo "$RPMS_LIST" | grep "^$passnum:" | sed 's/^[0-9]\+://')
+            if [ -z "$pass" ]; then
+                trace "...nothing left to do."
+                break
+            else
+                set -- $pass
+
+                # make sure each RPM exists
+                for RPM; do
+                    if [ ! -e "$RPM" ]; then
+                        die "cannot find required package $RPM"
+                    fi
+                done
+
+                # rpm insists on having an absolute path to its --root option's argument
+                if ! expr "$TARGET" : "/" >/dev/null 2>&1; then
+                    TARGET="$PWD/$TARGET"
+                fi
+                trace "Installing $* to $TARGET..."
+                if ! rpm --install $rpm_force_opt --root "$TARGET" $@; then
+                    warn "command \"rpm --install $rpm_force_opt --root $TARGET $*\"" \
+                    "failed"
+                fi
+            fi
+            passnum=$(( $passnum + 1 ))
+        done
+
+        cd $PWD
+    fi
+}
+
 print_rpms() {
     local rpm_list=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
 
@@ -266,5 +334,13 @@ print_rpms() {
 }
 
 install_rpms() {
-    install_by_pass $RPMS
+    warn "Currently, Mandriva support is spotty at best..."
+    warn "You will probably have problems with it"
+    warn "If someone would like to help me out with the Mandriva suite"
+    warn "scripts, please come to http://pimpscript.net/"
+    mdk_install_by_pass $RPMS
+
+    # FIXME
+    # ACK! Hackish foo!
+    mkdir -p $TARGET/proc
 }
