@@ -37,7 +37,13 @@ get_rpms() {
             if [ ! -f "$LOCAL_SOURCE/$a" ]; then
                 die "$a not found at $LOCAL_SOURCE"
             fi
+            if [ -n "$DOWNLOAD_ONLY" ]; then
+                cp -f $LOCAL_SOURCE/$a $TMP_DIR
+            fi
         done
+        if [ -n "$DOWNLOAD_ONLY" ]; then
+            mv $TMP_DIR $TARGET
+        fi
         PKG_DIR=$LOCAL_SOURCE
         KEEP_TMP="yes"
     elif [ -n "$UNPACK_TARBALL" ]; then
