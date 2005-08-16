@@ -32,7 +32,7 @@ import tempfile
 def process(rpm_dir, recursive, progress, verbose):
     """ Main process if ran from command line """
 
-    solver = rpm_solver(progress, verbose)
+    solver = rpm_solver.rpm_solver(progress, verbose)
     solver.init_db(rpm_dir, None, recursive)
     needed, problems = solver.dep_closure()
 
