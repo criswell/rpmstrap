@@ -16,7 +16,8 @@ if [ $# != 0 ] ; then
                 ;;
             -p)
                 rm -f $BINDIR/rpmstrap
-                rm -f $BINDIR/rpm-solver.py
+                rm -f $BINDIR/rpm_solver.py
+                rm -f $BINDIR/rpm_refiner.py
                 rm -fr $LIBDIR
                 rm -fr $DOCDIR
                 echo "rpmstrap purged"
@@ -32,7 +33,8 @@ fi
 # Default is to install
 
 cp -fr rpmstrap $BINDIR/.
-cp -fr tools/rpm-solver.py $BINDIR/.
+cp -fr tools/rpm_solver.py $BINDIR/.
+cp -fr tools/rpm_refiner.py $BINDIR/.
 mkdir -p $LIBDIR
 cp -fr lib/functions $LIBDIR/.
 cp -fr lib/scripts $LIBDIR/.
