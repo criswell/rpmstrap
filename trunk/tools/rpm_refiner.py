@@ -26,6 +26,7 @@
 import rpm_solver
 import getopt
 import commands
+import sys
 import tempfile
 
 def process(rpm_dir, recursive, progress, verbose):
