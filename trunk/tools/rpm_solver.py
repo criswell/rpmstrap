@@ -357,8 +357,7 @@ def process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verb
         # Okay we do stuff
         ordered = solver.order_solver()
         i = 0
-        for line in ordered:
-            print line
+        for name in ordered:
             print ("%d:%s" % (i, name))
             i = i + 1
 
