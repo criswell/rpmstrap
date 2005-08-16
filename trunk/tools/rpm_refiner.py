@@ -24,6 +24,7 @@
 # Author: Sam Hart
 
 import rpm_solver
+import getopt
 import commands
 import tempfile
 
