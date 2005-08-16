@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-# rpm-solver.py
+# rpm_solver.py
 #  Given a pile of RPMs will check dependency closure, will attempt to figure out
 # their installation order.
 #
@@ -189,8 +189,6 @@ class rpm_solver:
             except:
                 break
 
-        #order_pkg = self.solver_db.ts()
-
         for pkg in order_pkg:
             order_filename.append(self._get_filename_from_hdr(pkg))
 
@@ -359,12 +357,13 @@ def process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verb
         # Okay we do stuff
         ordered = solver.order_solver()
         i = 0
-        for name in ordered:
+        for line in ordered:
+            print line
             print ("%d:%s" % (i, name))
             i = i + 1
 
 def usage():
-    print "rpm-solver.py -"
+    print "rpm_solver.py -"
     print "  Given a directory of RPMs, attempt to order their"
     print "installation or determine if they have dependency closure."
     print "\nUSAGE:"
