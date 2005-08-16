@@ -64,6 +64,7 @@ def process(rpm_dir, recursive, progress, verbose):
         if verbose:
             print "---------\nTrying %s" % fullname
         tmp_order.append(fullname)
+        allnames = ""
         for tmp_name in tmp_order:
             allnames = "%s %s" % (allnames, tmp_name)
 
@@ -77,7 +78,6 @@ def process(rpm_dir, recursive, progress, verbose):
         if not status:
             new_order.append(tmp_order)
             tmp_order = []
-            allnames = ""
 
     for sub_order in new_order:
         for name in sub_order:
