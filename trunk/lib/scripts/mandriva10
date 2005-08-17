@@ -140,6 +140,11 @@ work_out_rpms() {
 4:rpmtools-5.0.20-1mdk.i586.rpm
 4:initscripts-7.61.1-26mdk.i586.rpm
 4:bootloader-utils-1.9-2mdk.i586.rpm
+5:man-1.5m2-2mdk.i586.rpm
+6:groff-for-man-1.19-9mdk.i586.rpm
+7:libstdc++6-3.4.3-7mdk.i586.rpm
+8:libstdc++5-3.3.4-4mdk.i586.rpm
+9:libgcc1-3.4.3-7mdk.i586.rpm
 EOF
             )
             ;;
