@@ -264,7 +264,9 @@ mdk_install_by_pass() {
     shift
     for a in $@
     do
-        RPMS_LIST=$(echo -e "$RPMS_LIST\n$a")
+        if ! echo "$EXCLUDES" | grep $a; then
+            RPMS_LIST=$(echo -e "$RPMS_LIST\n$a")
+        fi
     done
     local rpms_to_get=$(echo "$RPMS_LIST" | sed "s/[[:digit:]]\+://")
     get_rpms $rpms_to_get
