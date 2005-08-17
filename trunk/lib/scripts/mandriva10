@@ -265,7 +265,7 @@ mdk_install_by_pass() {
     for a in $@
     do
         local b=$(echo "$a" | sed "s/[[:digit:]]\+://")
-        if ! echo "$EXCLUDES" | grep $b; then
+        if ! echo "$EXCLUDES" | grep $b > /dev/null; then
             RPMS_LIST=$(echo -e "$RPMS_LIST\n$a")
         else
             trace "'$b' found in exclude list. Removing from install.."
