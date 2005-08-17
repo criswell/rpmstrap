@@ -334,10 +334,12 @@ print_rpms() {
 }
 
 install_rpms() {
-    warn "Currently, Mandriva support is spotty at best..."
-    warn "You will probably have problems with it"
-    warn "If someone would like to help me out with the Mandriva suite"
-    warn "scripts, please come to http://pimpscript.net/"
+    warn "**************************************************************"
+    warn "* Currently, Mandriva support is spotty at best..."
+    warn "* You will probably have problems with it"
+    warn "* If someone would like to help me out with the Mandriva suite"
+    warn "* scripts, please come to http://pimpscript.net/"
+    warn "**************************************************************"
     mdk_install_by_pass $RPMS
 
     # FIXME
