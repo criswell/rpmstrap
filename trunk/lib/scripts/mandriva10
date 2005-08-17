@@ -319,7 +319,7 @@ mdk_install_by_pass() {
             passnum=$(( $passnum + 1 ))
         done
 
-        for fname in $INCLUDES
+        for fname in $INCLUDES;
         do
             trace "Installing included package : $fname..."
             if ! rpm --install $rpm_force_opt --root "$TARGET" $fname; then
