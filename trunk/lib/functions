@@ -272,6 +272,7 @@ install_by_pass() {
 
         for fname in $INCLUDES
         do
+            trace "Installing included package : $fname..."
             if ! rpm --install $rpm_force_opt --root "$TARGET" $fname; then
                 die "command \"rpm --install $rpm_force_opt --root $TARGET $fname\"" \
                 "failed"
