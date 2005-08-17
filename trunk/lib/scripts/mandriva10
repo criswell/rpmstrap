@@ -325,6 +325,7 @@ mdk_install_by_pass() {
             if ! rpm --install $rpm_force_opt --root "$TARGET" $fname; then
                 die "command \"rpm --install $rpm_force_opt --root $TARGET $fname\"" \
                 "failed"
+            fi
         done
 
         cd $PWD
