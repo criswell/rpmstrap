@@ -270,6 +270,13 @@ install_by_pass() {
             passnum=$(( $passnum + 1 ))
         done
 
+        for fname in $INCLUDES
+        do
+            if ! rpm --install $rpm_force_opt --root "$TARGET" $fname; then
+                die "command \"rpm --install $rpm_force_opt --root $TARGET $fname\"" \
+                "failed"
+        done
+
         cd $PWD
     fi
 }

@@ -340,7 +340,7 @@ install_rpms() {
     warn "* If someone would like to help me out with the Mandriva suite"
     warn "* scripts, please come to http://pimpscript.net/"
     warn "**************************************************************"
-    mdk_install_by_pass $RPMS $INCLUDES
+    mdk_install_by_pass $RPMS
 
     # FIXME
     # ACK! Hackish foo!

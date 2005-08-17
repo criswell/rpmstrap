@@ -155,5 +155,5 @@ print_rpms() {
 }
 
 install_rpms() {
-    install_by_pass $RPMS $INCLUDES
+    install_by_pass $RPMS
 }
