@@ -173,11 +173,11 @@ if [ $# != 0 ] ; then
                 shift 2
                 ;;
             --include*)
-                ADDITIONAL="$(echo $1 | cut -f2 -d"="|tr , " ")"
+                INCLUDES="$(echo $1 | cut -f2 -d"="|tr , " ")"
                 shift 1
                 ;;
             --exclude*)
-                ADDITIONAL="$(echo $1 | cut -f2 -d"="|tr , " ")"
+                EXCLUDES="$(echo $1 | cut -f2 -d"="|tr , " ")"
                 shift 1
                 ;;
             --verbose)
