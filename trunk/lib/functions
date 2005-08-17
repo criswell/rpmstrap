@@ -213,8 +213,11 @@ install_by_pass() {
     shift
     for a in $@
     do
-        if ! echo "$EXCLUDES" | grep $a; then
+        local b=$(echo "$a" | sed "s/[[:digit:]]\+://")
+        if ! echo "$EXCLUDES" | grep $b; then
             RPMS_LIST=$(echo -e "$RPMS_LIST\n$a")
+        else
+            trace "'$b' found in exclude list. Removing from install.."
         fi
     done
     local rpms_to_get=$(echo "$RPMS_LIST" | sed "s/[[:digit:]]\+://")
