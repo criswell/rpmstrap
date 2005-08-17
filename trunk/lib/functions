@@ -260,9 +260,11 @@ install_by_pass() {
                     TARGET="$PWD/$TARGET"
                 fi
                 trace "Installing $* to $TARGET..."
-                if ! rpm --install $rpm_force_opt --root "$TARGET" $@; then
-                    die "command \"rpm --install $rpm_force_opt --root $TARGET $*\"" \
-                    "failed"
+                if ! echo "$EXCLUDES" | grep $*; then
+                    if ! rpm --install $rpm_force_opt --root "$TARGET" $@; then
+                        die "command \"rpm --install $rpm_force_opt --root $TARGET $*\"" \
+                        "failed"
+                    fi
                 fi
             fi
             passnum=$(( $passnum + 1 ))
