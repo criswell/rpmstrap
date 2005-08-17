@@ -44,11 +44,12 @@ fi
 # Default is to install
 
 cp -fr rpmstrap $BINDIR/.
-cp -fr tools/rpm_solver.py $BINDIR/.
-cp -fr tools/rpm_refiner.py $BINDIR/.
 mkdir -p $LIBDIR
 cp -fr lib/functions $LIBDIR/.
 cp -fr lib/scripts $LIBDIR/.
+cp -fr tools/ $LIBDIR/.
+ln -s $LIBDIR/rpm_solver.py $BINDIR/rpm_solver.py
+ln -s $LIBDIR/rpm_refiner.py $BINDIR/rpm_refiner.py
 mkdir -p $DOCDIR
 cp -fr lib/*.txt $DOCDIR/.
 cp -fr LICENSE $DOCDIR/.
