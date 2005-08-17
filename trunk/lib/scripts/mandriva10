@@ -345,4 +345,5 @@ install_rpms() {
     # FIXME
     # ACK! Hackish foo!
     mkdir -p $TARGET/proc
+    touch $TARGET/etc/fstab
 }
