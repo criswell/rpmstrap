@@ -19,13 +19,13 @@ UNPACK_TARBALL          A tarball containing RPMs to install.
 ADDITIONAL              A list of additional packages to install.
                         Suite scripts should tack these additional
                         packages on to the end of their list.
-                        
+
 LIST_SUITES             Boolean. If true, rpmstrap will list the
                         suites it knows of.
                         *Suite scripts should not modify this.*
                         *Suite scripts will never be run if this is
                          true.*
-                         
+
 FIND_BEST_MIRROR        Boolean. If true, then the user has requested
                         finding the best mirror.
                         *Suite scripts should not modify this.*
@@ -105,6 +105,12 @@ set_mirrors()           Given a list of mirrors, set them up such that
 REQUIRED SUITE SCRIPT FUNCTIONS:
 --------------------------------
 The following functions MUST be present inside the suite script.
+
+suite_notes()           This function will display any notes pertaining
+                        to the suite. There is no /real/ format for these,
+                        but generally it includes author, what the suite
+                        does, any warnings or limitations, as well as
+                        usage information (if aplicable).
 
 work_out_mirror()       This function should figure out which mirror
                         list to use and call the rpmstrap function
