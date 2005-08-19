@@ -20,6 +20,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+suite_notes() {
+    cat <<EOF
+Fedora Core 2 (tettnang) Suite Script
+-------------------------------------
+Builds a basic Fedora Core 2 bootstrap.
+
+Authors: Branden Robinson, Sam Hart
+
+EOF
+}
+
 work_out_mirror() {
     local big_mirror_list=""
     case $ARCH in
@@ -227,7 +238,7 @@ esac
 
 print_rpms() {
     local rpm_list=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
-    
+
     echo "RPMs for suite $RPMSUITE and arch $ARCH"
     for a in $rpm_list
     do

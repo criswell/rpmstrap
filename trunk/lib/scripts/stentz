@@ -1,9 +1,3 @@
-# This is the rpmstrap script for heidelberg (FC3).
-# It is based upon an rpmstrap originally by
-# Branden Robinson at Progeny Linux Systems, Inc.
-# New segments of code and modifications made by
-# Sam Hart.
-
 # Copyright 2004 Progeny Linux Systems, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -20,7 +14,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-# Author: Sam Hart
+# Author: olivier <bitmap_@_pan-.-homelinux.com>
+
+suite_notes() {
+    cat <<EOF
+Fedora Core 4 (stentz) Suite Script
+-----------------------------------
+Builds a basic Fedora Core 4 bootstrap.
+
+Author: olivier <bitmap_@_pan-.-homelinux.com>
+
+EOF
+}
 
 work_out_mirror() {
     local big_mirror_list=""

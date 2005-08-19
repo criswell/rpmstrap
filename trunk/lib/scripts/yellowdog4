@@ -19,8 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-# Author: Sam Hart
+
+suite_notes() {
+    cat <<EOF
+Yellow Dog Linux 4 Suite Script
+-------------------------------
+Builds a basic Yellow Dog Linux 4 bootstrap.
+
+Author: Derrick Pates
+
+EOF
+}
 
 work_out_mirror() {
     local big_mirror_list=""
@@ -151,7 +160,7 @@ esac
 
 print_rpms() {
     local rpm_list=$(echo "$RPMS" | sed "s/[[:digit:]]\+://")
-    
+
     echo "RPMs for suite $RPMSUITE and arch $ARCH"
     for a in $rpm_list
     do

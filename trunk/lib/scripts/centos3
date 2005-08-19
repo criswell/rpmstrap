@@ -16,6 +16,18 @@
 #
 # Authors: Sam Hart & Jake Tabke
 
+suite_notes() {
+    cat <<EOF
+CentOS 3 Suite Script
+---------------------
+Builds a basic CentOS 3.x bootstrap.
+
+Authors: Sam Hart, Jake Tabke, Derrik Pates
+
+EOF
+}
+
+
 work_out_mirror() {
     local big_mirror_list=""
     case $ARCH in

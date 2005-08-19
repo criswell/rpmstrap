@@ -18,6 +18,17 @@
 #          Jake Tabke
 #          Derrik Pates
 
+suite_notes() {
+    cat <<EOF
+CentOS 4 Suite Script
+---------------------
+Builds a basic CentOS 4 bootstrap.
+
+Authors: Sam Hart, Jake Tabke, Derrik Pates
+
+EOF
+}
+
 work_out_mirror() {
     local big_mirror_list=""
     case $ARCH in

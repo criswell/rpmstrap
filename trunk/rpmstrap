@@ -23,7 +23,7 @@ unset UNPACK_TARBALL ADDITIONAL LIST_SUITES || true
 unset FIND_BEST_MIRROR BEST_MIRROR LOCAL_SOURCE || true
 unset KEEP_TMP PKG_DIR MIRROR_LIST TRY_MIRRORS || true
 unset MIRROR WGET_DELAY TARBALL_STRIP_DEPTH || true
-unset FORCE_RPM || true
+unset FORCE_RPM SUITE_NOTES RPMSUITE || true
 
 if [ "$TMP_DIR" = "" ]; then
     TMP_DIR="/tmp/rpmstrap."
@@ -71,6 +71,8 @@ usage()
                                (See the texinfo document for tar)
 
       --list-suites          list the available suites this program knows
+
+      --suite-notes          show the notes associated with a specific suite
 
       --find-best-mirror     find the best mirror (warning VERY slow, may be
                                better to just use a slow mirror ;-)
@@ -120,6 +122,15 @@ if [ $# != 0 ] ; then
             --list-suites)
                 LIST_SUITES=yes
                 shift
+                ;;
+            --suite-notes)
+                SUITE_NOTES=yes
+                if [ -n "$2" ] ; then
+                    RPMSUITE="$2"
+                    shift 2
+                else
+                    die "option requires an argument $1"
+                fi
                 ;;
             --arch)
                 if [ -n "$2" ] ; then
@@ -204,6 +215,16 @@ if [ -n "$LIST_SUITES" ]; then
         printf "\t$a\n"
         # XXX This should be done much cleaner later
     done
+elif [ -n "$SUITE_NOTES" ]; then
+    SCRIPT="$RPMSTRAP_DIR/scripts/$RPMSUITE"
+
+    trace "Loading $SCRIPT suite"
+
+    . $SCRIPT
+
+    trace "Calling $RPMSUITE for notes"
+
+    suite_notes
 else
     if [ "$1" = "" ] && ( [ "$2" = "" ] && [ "$JUST_PRINT_RPMS" = "" ] ); then
         usage_error "You must specify a suite and a target."

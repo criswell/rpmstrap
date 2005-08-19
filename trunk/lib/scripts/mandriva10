@@ -16,6 +16,25 @@
 #
 # Author: Sam Hart
 
+suite_notes() {
+    cat <<EOF
+Mandriva 10.x Suite Script
+--------------------------
+Builds a basic Mandriva 10.x bootstrap.
+
+Authors: Sam Hart
+
+WARNING:
+    This suite script is buggy at best. There seem to be some circular
+    dependency issues that I cannot resolve. Patches would be gladly
+    accepted.
+
+    Use this script at your own risk.
+
+EOF
+}
+
+
 work_out_mirror() {
     local big_mirror_list=""
     case $ARCH in

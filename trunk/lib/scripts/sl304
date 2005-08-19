@@ -14,8 +14,25 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-# Authors: Marco La Rosa
+# Author: Marco La Rosa
 # Based on CentOS script by: Sam Hart & Jake Tabke
+
+suite_notes() {
+    cat <<EOF
+Scientfic Linux 3.0.4 Suite Script
+----------------------------------
+Builds a basic Scientific Linux (SL) 3.0.4 bootstrap.
+
+SL is a Linux release put together by Fermilab, CERN, and various other
+labs and universities around the world. Its primary purpose is to reduce
+duplicated effort of the labs, and to have a common install base for the
+various experimentors.
+
+Author: Marco La Rosa
+
+EOF
+}
+
 
 work_out_mirror() {
     local big_mirror_list=""
