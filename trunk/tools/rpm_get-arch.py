@@ -24,8 +24,57 @@ import commands
 import re
 import getopt
 import sys
-import progress_bar
 import rpmdiff_lib
+
+class pb:
+    def __init__(self, prefix="Progress :", prog_char="-", col=60, outnode=sys.stdout):
+        self.f = outnode
+        self.prog_char = prog_char
+        self.col = col
+        self.spinner = ["|", "/", "-", "\\"]
+        self.spin_count = 0
+        self.prefix = prefix
+
+    def set(self, prefix="Progress :"):
+        self.prefix = prefix
+
+    def clear(self):
+        self.f.write("\r")
+        for i in range(0, self.col):
+            self.f.write(" ")
+
+        self.f.write("\r")
+        self.f.flush()
+
+    def progress(self, percentage):
+        """Count must be out of 100%"""
+
+        if percentage > 1.0:
+            percentage = 1.0
+
+        self.f.write(("\r%s 0 |") % self.prefix)
+        width = self.col - len(("\r%s 0  100    |") % self.prefix) + 1
+        count = width * percentage
+
+        i = 1
+        while i < count:
+            self.f.write(self.prog_char)
+            i = i + 1
+
+        if count < width:
+            self.f.write(">")
+            while i < width:
+                self.f.write(" ")
+                i = i + 1
+
+        if self.spin_count >= len(self.spinner):
+            self.spin_count = 0
+
+        self.f.write(self.spinner[self.spin_count])
+        self.spin_count = self.spin_count + 1
+
+        self.f.write(" 100 ")
+        self.f.flush()
 
 def list_files(root, patterns='*', recurse=1, return_folders=0):
     """List all the files in a directory"""
