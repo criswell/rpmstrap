@@ -146,8 +146,6 @@ find_best_mirror() {
         fi
         timepass=$(/usr/bin/time -f "%e" --quiet wget -q -c -T 1 --connect-timeout=.5 $a --read-timeout=.5 2>&1)
         # XXX: Why was this here? Is it even needed?
-        #setup_env
-        #cd $TMP_DIR
         if [ $(echo "$timepass < $lowtimepass" | bc -l) ]; then
             lowtimepass=$timepass
             lowurl=$a
