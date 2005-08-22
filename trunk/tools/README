@@ -29,3 +29,10 @@ rpmstrap.
    
    If no order can be found, rpm_refiner.py will not work.
 
+* rpm_get-arch.py
+   Given a pool of RPMs for a given arch, this script will attempt
+   to verify that you have (or can get) all RPMs for another arch.
+   
+   This script is useful if you have one arch all worked out (e.g.
+   x86) but want to try to work out the rpmstrap script for
+   another arch (e.g., ppc).

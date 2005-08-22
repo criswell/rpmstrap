@@ -145,7 +145,6 @@ find_best_mirror() {
             lowurl=$a
         fi
         timepass=$(/usr/bin/time -f "%e" --quiet wget -q -c -T 1 --connect-timeout=.5 $a --read-timeout=.5 2>&1)
-        # XXX: Why was this here? Is it even needed?
         if [ $(echo "$timepass < $lowtimepass" | bc -l) ]; then
             lowtimepass=$timepass
             lowurl=$a
