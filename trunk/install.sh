@@ -3,15 +3,15 @@
 VERSION=0.5
 
 if [ "$BINDIR" = "" ]; then
-    BINDIR=/usr/bin
+    BINDIR=$DESTDIR/usr/bin
 fi
 
 if [ "$LIBDIR" = "" ]; then
-    LIBDIR=/usr/lib/rpmstrap
+    LIBDIR=$DESTDIR/usr/lib/rpmstrap
 fi
 
 if [ "$DOCDIR" = "" ]; then
-    DOCDIR=/usr/share/doc
+    DOCDIR=/$DESTDIRusr/share/doc
 fi
 DOCDIR=$DOCDIR/rpmstrap-$VERSION
 
@@ -44,6 +44,7 @@ fi
 
 # Default is to install
 
+mkdir -p $BINDIR
 cp -fr rpmstrap $BINDIR/.
 mkdir -p $LIBDIR
 cp -fr lib/functions $LIBDIR/.
