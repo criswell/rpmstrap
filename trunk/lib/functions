@@ -69,7 +69,7 @@ get_rpms() {
             fi
             if [ -n "$MIRROR" ]; then
                 trace "get_rpms(): Getting RPM from $MIRROR"
-                wget $verbose ${MIRROR%/}/$a
+                wget $verbose ${MIRROR%/}/$a -O $a
                 if [ ! -f "$a" ]; then
                     die "$a not retrievable from $MIRROR"
                 fi
@@ -78,7 +78,7 @@ get_rpms() {
                     for mir in $MIRROR_LIST
                     do
                         trace "get_rpms(): Getting RPM from $mir"
-                        wget $verbose ${mir%/}/$a
+                        wget $verbose ${mir%/}/$a -O $a
                         if [ ! -f "$a" ]; then
                             break
                         fi
@@ -89,7 +89,7 @@ get_rpms() {
                 else
                     trace "get_rpms(): Getting RPM from $BEST_MIRROR"
                     trace "wget $verbose ${BEST_MIRROR%/}/$a"
-                    wget $verbose ${BEST_MIRROR%/}/$a
+                    wget $verbose ${BEST_MIRROR%/}/$a -O $a
                     if [ ! -f "$a" ]; then
                         die "Could not obtain $a from $BEST_MIRROR"
                     fi
