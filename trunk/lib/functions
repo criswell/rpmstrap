@@ -67,11 +67,13 @@ EOF
         echo $PDK_REPORT_XML > $TMP_DIR/.report.xml
 
         local PDK_REPORT=$(cd $PDK_WORKSPACE/work; pdk repogen $TMP_DIR/.report.xml)
+        trace $PDK_REPORT
         for a in $PDK_REPORT
         do
             local DESTNAME="$(echo $a | cut -f1 -d",")"
             local CACHENAME="$(echo $a | cut -f2 -d",")"
             ln -f $CACHENAME $DESTNAME
+            trace "ln -f $CACHENAME $DESTNAME"
         done
     elif [ -n "$UNPACK_TARBALL" ]; then
         trace "get_rpms(): Using $UNPACK_TARBALL for RPMS"
