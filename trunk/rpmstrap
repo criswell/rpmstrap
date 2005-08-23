@@ -196,7 +196,7 @@ if [ $# != 0 ] ; then
                 shift 1
                 ;;
             --pdk-source*)
-                PDK_SOURCE=="$(echo $1 | cut -f2 -d"=")"
+                PDK_SOURCE="$(echo $1 | cut -f2 -d"=")"
                 PDK_WORKSPACE="$(echo $PDK_SOURCE | cut -f1 -d",")"
                 PDK_COMPONENT="$(echo $PDK_SOURCE | cut -f2 -d",")"
                 shift 1
