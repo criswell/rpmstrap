@@ -47,7 +47,6 @@ get_rpms() {
         PKG_DIR=$LOCAL_SOURCE
         KEEP_TMP="yes"
     elif [ -n "$PDK_SOURCE" ]; then
-        setup_env
         trace "get_rpms(): Using PDK $PDK_SOURCE for RPMS"
         warn "Be sure your PDK environment is correct. If anything"
         warn "fails here, the most likely culprit is your PDK workspace."
@@ -65,7 +64,7 @@ get_rpms() {
     </component>
 EOF
         )
-        echo $PDK_REPORT > $TMP_DIR/.report.xml
+        echo $PDK_REPORT_XML > $TMP_DIR/.report.xml
 
         local PDK_REPORT=$(cd $PDK_WORKSPACE/work; pdk repogen $TMP_DIR/.report.xml)
         for a in $PDK_REPORT
