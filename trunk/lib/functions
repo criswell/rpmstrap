@@ -70,7 +70,7 @@ EOF
         trace $PDK_REPORT
         for a in $PDK_REPORT
         do
-            local DESTNAME="$(echo $a | cut -f1 -d",")"
+            local DESTNAME="$TMP_DIR/$(echo $a | cut -f1 -d",")"
             local CACHENAME="$(echo $a | cut -f2 -d",")"
             ln -f $CACHENAME $DESTNAME
             trace "ln -f $CACHENAME $DESTNAME"
