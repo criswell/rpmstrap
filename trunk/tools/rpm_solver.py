@@ -176,7 +176,7 @@ class rpm_solver:
 
         return None
 
-    def order_solver(self):
+    def order_solver(self, fullname=1):
         """ Once the database has been populated, try to solve the order """
 
         order_pkg = []
@@ -190,7 +190,10 @@ class rpm_solver:
                 break
 
         for pkg in order_pkg:
-            order_filename.append(self._get_filename_from_hdr(pkg))
+            if fullname:
+                order_filename.append(self._get_filename_from_hdr(pkg))
+            else:
+                order_filename.append(pkg)
 
         return order_filename
 
@@ -317,7 +320,7 @@ class rpm_solver:
                 os.path.walk(root, visit, arg)
                 return arg.results
 
-def process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verbose):
+def process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verbose, pdk_output):
     """ Main process if ran from command line """
 
     solver = rpm_solver(progress, verbose)
@@ -355,11 +358,18 @@ def process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verb
         print ("The RPMs in %s have dependency closure" % rpm_dir)
     else:
         # Okay we do stuff
-        ordered = solver.order_solver()
+        if pdk_output:
+            ordered = solver.order_solver(0)
+        else
+            ordered = solver.order_solver(1)
+
         i = 0
         for name in ordered:
-            print ("%d:%s" % (i, name))
-            i = i + 1
+            if pdk_output:
+                print ("<rpm><name>%s</name><meta><pass>%d</pass></meta></rpm>" % (name, i))
+            else:
+                print ("%d:%s" % (i, name))
+        i = i + 1
 
 def usage():
     print "rpm_solver.py -"
@@ -374,12 +384,13 @@ def usage():
     print "\t-v | --verbose\tBe verbose in processing"
     print "\t-p | --progress\tUse progress bar"
     print "\t-r | --recursive\tScan RPM_DIR recursively"
+    print "\t-k | --pdk\t\tProduce PDK ready XML snippits"
     print "\n\n"
 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "vprs:cuy", ["verbose", "progress", "recursive", "solve=", "check", "yes"])
+        opts, args = getopt.getopt(sys.argv[1:], "vprs:cuyk", ["verbose", "progress", "recursive", "solve=", "check", "yes", "pdk"])
     except getopt.GetoptError:
         # print help information and exit:
         usage()
@@ -391,6 +402,7 @@ def main():
     solve_dir = None
     check_only = 0
     yes_solve = 0
+    pdk_output = 0
 
     if len(sys.argv) < 2:
         usage()
@@ -417,9 +429,12 @@ def main():
         if o in ("-y", "--yes"):
             yes_solve = 1
 
+        if o in ("-k", "--pdk"):
+            pdk_output = 1
+
     if verbose > 1: print "WARNING: Excessive debugging"
 
-    process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verbose)
+    process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verbose, pdk_output)
 
 if __name__ == "__main__":
     main()
