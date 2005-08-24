@@ -29,7 +29,7 @@ import commands
 import sys
 import tempfile
 
-def process(rpm_dir, recursive, progress, verbose):
+def process(rpm_dir, recursive, progress, verbose, pdk_output):
     """ Main process if ran from command line """
 
     solver = rpm_solver.rpm_solver(progress, verbose)
@@ -50,7 +50,10 @@ def process(rpm_dir, recursive, progress, verbose):
         sys.exit(2)
 
     # Okay we do stuff
-    ordered = solver.order_solver()
+    if pdk_output:
+        ordered = solver.order_solver(0)
+    else:
+        ordered = solver.order_solver(1)
     ordered.reverse()
     tmp_dir = tempfile.mkdtemp()
 
@@ -84,7 +87,10 @@ def process(rpm_dir, recursive, progress, verbose):
 
     for sub_order in new_order:
         for name in sub_order:
-            print ("%d:%s" % (i, name))
+            if pdk_output:
+                print ("<rpm><name>%s</name><meta><pass>%d</pass></meta></rpm>" % (name, i))
+            else:
+                print ("%d:%s" % (i, name))
         i = i + 1
 
 def usage():
@@ -99,12 +105,13 @@ def usage():
     print "\t-v | --verbose\tBe verbose in processing"
     print "\t-p | --progress\tUse progress bar"
     print "\t-r | --recursive\tScan RPM_DIR recursively"
+    print "\t-k | --pdk\t\tProduce PDK ready XML snippits"
     print "\n\n"
 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "vpr", ["verbose", "progress", "recursive"])
+        opts, args = getopt.getopt(sys.argv[1:], "vprk", ["verbose", "progress", "recursive", "pdk"])
     except getopt.GetoptError:
         # print help information and exit:
         usage()
@@ -113,6 +120,7 @@ def main():
     verbose = 0
     progress = 0
     recursive = 0
+    pdk_output = 0
 
     if len(sys.argv) < 2:
         usage()
@@ -130,9 +138,12 @@ def main():
         if o in ("-r", "--recursive"):
             recursive = 1
 
+        if o in ("-k", "--pdk"):
+            pdk_output = 1
+
     if verbose > 1: print "WARNING: Excessive debugging"
 
-    process(rpm_dir,recursive, progress, verbose)
+    process(rpm_dir,recursive, progress, verbose, pdk_output)
 
 if __name__ == "__main__":
     main()
