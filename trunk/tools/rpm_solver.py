@@ -193,7 +193,7 @@ class rpm_solver:
             if fullname:
                 order_filename.append(self._get_filename_from_hdr(pkg))
             else:
-                order_filename.append(pkg)
+                order_filename.append(pkg.N())
 
         return order_filename
 
@@ -369,7 +369,7 @@ def process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verb
                 print ("<rpm><name>%s</name><meta><pass>%d</pass></meta></rpm>" % (name, i))
             else:
                 print ("%d:%s" % (i, name))
-        i = i + 1
+            i = i + 1
 
 def usage():
     print "rpm_solver.py -"
