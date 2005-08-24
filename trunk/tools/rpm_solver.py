@@ -360,7 +360,7 @@ def process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verb
         # Okay we do stuff
         if pdk_output:
             ordered = solver.order_solver(0)
-        else
+        else:
             ordered = solver.order_solver(1)
 
         i = 0
