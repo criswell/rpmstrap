@@ -38,7 +38,25 @@ work_out_mirror() {
 }
 
 work_out_rpms() {
-    RPMS=$(echo SOMETHING)
+    local PDK_REPORT_XML=$(cat <<EOF
+<?xml version="1.0"?>
+<component>
+  <meta>
+    <repo-type>report</repo-type>
+    <combined-format>%(pass)s:%(filename)s</combined-format>
+  </meta>
+  <contents>
+    <component>$PDK_COMPONENT</component>
+  </contents>
+</component>
+EOF
+    )
+    echo $PDK_REPORT_XML > $TMP_DIR/.order_report.xml
+
+    local PDK_REPORT=$(cd $PDK_WORKSPACE/work; pdk repogen $TMP_DIR/.order_report.xml)
+    trace $PDK_REPORT
+
+    RPMS=$PDK_REPORT
 }
 
 print_rpms() {

@@ -56,7 +56,6 @@ get_rpms() {
         <meta>
             <repo-type>report</repo-type>
             <package-format>%(filename)s,%(cache_location)s</package-format>
-            <meta-format>%(subject)s %(predicate)s %(target)s</meta-format>
         </meta>
         <contents>
             <component>$PDK_COMPONENT</component>
