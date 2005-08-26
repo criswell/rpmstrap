@@ -53,10 +53,8 @@ EOF
     )
     echo $PDK_REPORT_XML > $TMP_DIR/.order_report.xml
 
-    local PDK_REPORT=$(cd $PDK_WORKSPACE/work; pdk repogen $TMP_DIR/.order_report.xml)
-    trace $PDK_REPORT
-
-    RPMS=$PDK_REPORT
+    RPMS=$(cd $PDK_WORKSPACE/work; pdk repogen $TMP_DIR/.order_report.xml)
+    trace $RPMS
 }
 
 print_rpms() {
