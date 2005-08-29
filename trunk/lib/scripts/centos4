@@ -17,6 +17,7 @@
 # Authors: Sam Hart
 #          Jake Tabke
 #          Derrik Pates
+#          Juraj Bednar (x86_64 support)
 
 suite_notes() {
     cat <<EOF
@@ -24,7 +25,7 @@ CentOS 4 Suite Script
 ---------------------
 Builds a basic CentOS 4 bootstrap.
 
-Authors: Sam Hart, Jake Tabke, Derrik Pates
+Authors: Sam Hart, Jake Tabke, Derrik Pates, Juraj Bednar
 
 EOF
 }
