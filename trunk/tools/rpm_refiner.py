@@ -29,6 +29,12 @@ import commands
 import sys
 import tempfile
 
+def get_rpm_name(rpm):
+    """ Given a filename, get the RPM name """
+
+    cmd = "rpm -qp --qf \"%{name}\" %s" % (rpm)
+    return commands.getoutput(cmd)
+
 def process(rpm_dir, recursive, progress, verbose, pdk_output):
     """ Main process if ran from command line """
 
@@ -88,7 +94,8 @@ def process(rpm_dir, recursive, progress, verbose, pdk_output):
     for sub_order in new_order:
         for name in sub_order:
             if pdk_output:
-                print ("<rpm><name>%s</name><meta><pass>%d</pass></meta></rpm>" % (name, i))
+                p_name = get_rpm_name(name)
+                print ("<rpm><name>%s</name><meta><pass>%d</pass></meta></rpm>" % (p_name, i))
             else:
                 print ("%d:%s" % (i, name))
         i = i + 1
