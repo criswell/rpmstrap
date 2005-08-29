@@ -91,7 +91,7 @@ def process(rpm_dir, recursive, progress, verbose, pdk_output):
                 print ("<rpm><name>%s</name><meta><pass>%d</pass></meta></rpm>" % (name, i))
             else:
                 print ("%d:%s" % (i, name))
-            i = i + 1
+        i = i + 1
 
 def usage():
     print "rpm_refiner.py -"
