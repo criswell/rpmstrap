@@ -43,7 +43,7 @@ work_out_rpms() {
 <component>
   <meta>
     <repo-type>report</repo-type>
-    <combined-format>%(pass)s:%(filename)s</combined-format>
+    <combined-format>%(target)s:%(filename)s</combined-format>
   </meta>
   <contents>
     <component>$PDK_COMPONENT</component>
