@@ -24,6 +24,7 @@ unset FIND_BEST_MIRROR BEST_MIRROR LOCAL_SOURCE || true
 unset KEEP_TMP PKG_DIR MIRROR_LIST TRY_MIRRORS || true
 unset MIRROR WGET_DELAY TARBALL_STRIP_DEPTH || true
 unset FORCE_RPM SUITE_NOTES RPMSUITE PDK_SOURCE || true
+unset PRE_SCRIPT POST_SCRIPT || true
 
 if [ "$TMP_DIR" = "" ]; then
     TMP_DIR="/tmp/rpmstrap."
@@ -93,6 +94,12 @@ usage()
       --include=A,B,C        adds specified names to the list of base packages
 
       --exclude=A,B,C        removes specified packages from the list
+
+      --pre                  runs a script before the installation
+                               [ --pre pre-install.sh ]
+
+      --post                 runs a script after the installation has completed
+                               [ --post post-install.sh ]
 
       --verbose              run in verbose mode
 
@@ -174,6 +181,22 @@ if [ $# != 0 ] ; then
                     else
                         UNPACK_TARBALL="$2"
                     fi
+                    shift 2
+                else
+                    die "option requires an argument $1"
+                fi
+                ;;
+            --pre)
+                if [ -n "$2" ]; then
+                    PRE_SCRIPT="$2"
+                    shift 2
+                else
+                    die "option requires an argument $1"
+                fi
+                ;;
+            --post)
+                if [ -n "$2" ]; then
+                    POST_SCRIPT="$2"
                     shift 2
                 else
                     die "option requires an argument $1"
@@ -276,7 +299,15 @@ else
     else
         setup_env
         trace "Install RPMS"
+        if [ -n "$PRE_SCRIPT" ]; then
+            trace "Running pre-script : $PRE_SCRIPT"
+            . $PRE_SCRIPT
+        fi
         install_rpms
+        if [ -n "$POST_SCRIPT" ]; then
+            trace "Running post-script : $POST_SCRIPT"
+            . $POST_SCRIPT
+        fi
         trace "Done"
         cleanup_env
     fi
