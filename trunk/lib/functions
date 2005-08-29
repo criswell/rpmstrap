@@ -253,6 +253,11 @@ install_by_pass() {
         rpm_force_opt="--force --nodeps"
     fi
 
+    local rpm_ignore_arch_opt=""
+    if [ -n "$IGNORE_ARCH" ]; then
+        rpm_ignore_arch_opt="--ignorearch"
+    fi
+
     if [ "$DOWNLOAD_ONLY" = "" ]; then
         if [ $(id -u) -ne 0 ]; then
             die "must have root privileges to create target"
@@ -291,7 +296,7 @@ install_by_pass() {
                 fi
                 trace "Installing $* to $TARGET..."
                 if ! rpm --install $rpm_force_opt --root "$TARGET" $@; then
-                    die "command \"rpm --install $rpm_force_opt --root $TARGET $*\"" \
+                    die "command \"rpm --install $rpm_force_opt $rpm_ignore_arch_opt --root $TARGET $*\"" \
                     "failed"
                 fi
             fi

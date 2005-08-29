@@ -24,7 +24,7 @@ unset FIND_BEST_MIRROR BEST_MIRROR LOCAL_SOURCE || true
 unset KEEP_TMP PKG_DIR MIRROR_LIST TRY_MIRRORS || true
 unset MIRROR WGET_DELAY TARBALL_STRIP_DEPTH || true
 unset FORCE_RPM SUITE_NOTES RPMSUITE PDK_SOURCE || true
-unset PRE_SCRIPT POST_SCRIPT || true
+unset PRE_SCRIPT POST_SCRIPT IGNORE_ARCH || true
 
 if [ "$TMP_DIR" = "" ]; then
     TMP_DIR="/tmp/rpmstrap."
@@ -88,6 +88,9 @@ usage()
 
       --force                force installation of RPMs even if there are
                                errors
+
+      --ignorearch          force installation of RPMs even if they are
+                               for different architecture
 
       --help                 display this help and exit
 
@@ -153,6 +156,10 @@ if [ $# != 0 ] ; then
                 ;;
             --force)
                 FORCE_RPM=yes
+                shift
+                ;;
+            --ignorearch)
+                IGNORE_ARCH=yes
                 shift
                 ;;
             --delay)
