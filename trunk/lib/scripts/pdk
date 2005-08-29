@@ -54,7 +54,7 @@ EOF
     setup_env
     echo $PDK_REPORT_XML > $TMP_DIR/.order_report.xml
 
-    RPMS=$(cd $PDK_WORKSPACE/work; pdk repogen $TMP_DIR/.order_report.xml)
+    RPMS=$(cd $PDK_WORKSPACE/work; pdk repogen $TMP_DIR/.order_report.xml | sort -n)
     trace $RPMS
     cleanup_env
 }
