@@ -11,7 +11,7 @@ if [ "$LIBDIR" = "" ]; then
 fi
 
 if [ "$DOCDIR" = "" ]; then
-    DOCDIR=/$DESTDIRusr/share/doc
+    DOCDIR=/$DESTDIR/usr/share/doc
 fi
 DOCDIR=$DOCDIR/rpmstrap-$VERSION
 
