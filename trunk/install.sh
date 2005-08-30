@@ -58,5 +58,6 @@ cp -fr lib/*.txt $DOCDIR/.
 cp -fr LICENSE $DOCDIR/.
 cp -fr README $DOCDIR/.
 cp -fr TODO $DOCDIR/.
+cp -fr CHANGES $DOCDIR/.
 
 echo rpmstrap installed
