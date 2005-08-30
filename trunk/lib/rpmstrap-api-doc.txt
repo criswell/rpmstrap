@@ -70,6 +70,35 @@ MIRROR_LIST             Array of possible mirror choices. Suite
 TRY_MIRRORS             Boolean for determining if the app should
                         sequentially run down the mirror list.
 
+MIRROR                  If defined, it is the user supplied mirror.
+                        *Suite scripts should not modify this.*
+
+WGET_DELAY              If defined, it is the delay that wget should
+                        use between get attempts.
+                        *Suite scripts should not modify this.*
+
+TARBALL_STRIP_DEPTH     Contains the strip depth (see man tar) when
+                        using a tar ball source.
+
+FORCE_RPM               Boolean. If true then RPM installation is
+                        forced regardless of dependency or other
+                        problems.
+
+SUITE_NOTES             Boolean. If true, then the user wants suite
+                        notes.
+                        *Suite scripts should not modify this.*
+
+PDK_SOURCE              The PDK source information.
+
+PRE_SCRIPT              Script to run before install.
+                        *Suite scripts should not modify this.*
+
+POST_SCRIPT             Script to run post install.
+                        *Suite scripts should not modify this.*
+
+IGNORE_ARCH             Boolean for determining if the arch should
+                        be ignored during install.
+
 RPMSTRAP FUNCTIONS:
 -------------------
 The following functions are available from rpmstrap for use in

@@ -20,6 +20,9 @@ suite_notes() {
     cat <<EOF
 PDK Suite Script
 ----------------
+A very basic PDK suite script. If your PDK product has dependency
+closure, and you have an installation order in the meta tags, you
+can use rpmstrap to bootstrap your RPM-based PDK product.
 
 Author: Sam Hart
 
