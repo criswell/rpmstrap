@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-# Author: Sam Hart, Juraj Bednar
+# Author: Sam Hart, Juraj Bednar, Branden Robinson
 
 unset DEBUG JUST_PRINT_RPMS DOWNLOAD_ONLY ARCH || true
 unset UNPACK_TARBALL ADDITIONAL LIST_SUITES || true
