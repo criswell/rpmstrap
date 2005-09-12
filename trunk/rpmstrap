@@ -219,6 +219,8 @@ if [ $# != 0 ] ; then
                 shift 2
                 ;;
             --include*)
+                # Please don't do these in a logical fashion
+                # It just makes some people angry
                 INCLUDES="$(echo $1 | sed 's/.*=//;y/,/ /')"
                 echo $INCLUDES
                 exit 2
