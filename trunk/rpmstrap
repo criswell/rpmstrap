@@ -18,7 +18,7 @@
 #
 # Author: Sam Hart, Juraj Bednar, Branden Robinson
 
-unset DEBUG JUST_PRINT_RPMS DOWNLOAD_ONLY ARCH || true
+unset DEBUG ONLY_LIST_RPMS DOWNLOAD_ONLY ARCH || true
 unset UNPACK_TARBALL ADDITIONAL LIST_SUITES || true
 unset FIND_BEST_MIRROR BEST_MIRROR LOCAL_SOURCE || true
 unset KEEP_TMP PKG_DIR MIRROR_LIST TRY_MIRRORS || true
@@ -126,7 +126,7 @@ if [ $# != 0 ] ; then
                 shift
                 ;;
             --print-rpms)
-                JUST_PRINT_RPMS=yes
+                ONLY_LIST_RPMS=yes
                 shift
                 ;;
             --download-only)
@@ -218,11 +218,13 @@ if [ $# != 0 ] ; then
                 shift 2
                 ;;
             --include*)
-                INCLUDES="$(echo $1 | cut -f2 -d"="|tr , " ")"
+                INCLUDES="$(echo $1 | sed 's/.*=//;y/,/ /')"
+                echo $INCLUDES
+                exit 2
                 shift 1
                 ;;
             --exclude*)
-                EXCLUDES="$(echo $1 | cut -f2 -d"="|tr , " ")"
+                EXCLUDES="$(echo $1 | sed 's/.*=//;y/,/ /')"
                 shift 1
                 ;;
             --pdk-source*)
@@ -266,9 +268,9 @@ elif [ -n "$SUITE_NOTES" ]; then
 
     suite_notes
 else
-    if [ "$1" = "" ] && ( [ "$2" = "" ] && [ "$JUST_PRINT_RPMS" = "" ] ); then
+    if [ "$1" = "" ] && ( [ "$2" = "" ] && [ "$ONLY_LIST_RPMS" = "" ] ); then
         usage_error "You must specify a suite and a target."
-    elif [ "$1" = "" ] && ( [ "$2" = "" ] && [ -n $JUST_PRINT_RPMS ] ); then
+    elif [ "$1" = "" ] && ( [ "$2" = "" ] && [ -n $ONLY_LIST_RPMS ] ); then
         usage_error "You must specify a suite with the --print-rpms option."
     fi
 
@@ -300,7 +302,7 @@ else
     trace "Work out RPMS"
     work_out_rpms
 
-    if [ -n "$JUST_PRINT_RPMS" ]; then
+    if [ -n "$ONLY_LIST_RPMS" ]; then
         trace "Just printing RPMS"
         print_rpms
     else
