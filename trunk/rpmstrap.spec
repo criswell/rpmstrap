@@ -1,6 +1,6 @@
 Summary: rpmstrap is a tool for bootstrapping a basic RPM-based system.
 Name: rpmstrap
-Version: 0.5
+Version: 0.5.1
 Release: 1
 URL: http://hackers.progeny.com/~sam/rpmstrap
 Source0: %{name}-%{version}.tar.bz2
@@ -48,3 +48,5 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Sep 8 2005  Jacob Boswell <jacob@privateroot.com>
 - Initial build.
+* Wed Sep 14 2005  Sam Hart <sam@progeny.com>
+- Bump to 0.5.1 release

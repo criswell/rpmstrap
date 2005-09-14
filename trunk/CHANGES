@@ -9,3 +9,11 @@
     - Add rpm_get-arch.py for attempting to convert archs
     - Add YUM to Stentz
 
+0.5.1 - Reworked the small patch of code submitted by Jake Tabke from
+        Feb 2005 that included stubbed out command-line parsing
+        conditional code from debootstrap
+      - Replaced buggy command-line conditional code with getopt
+        code
+      - Reworded some output to make certain people stop crying
+      - Refused to accept any further code from Jake Tabke
+
