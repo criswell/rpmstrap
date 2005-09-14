@@ -46,7 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr
 
 %changelog
-* Thu Sep 8 2005  Jacob Boswell <jacob@privateroot.com>
-- Initial build.
 * Wed Sep 14 2005  Sam Hart <sam@progeny.com>
 - Bump to 0.5.1 release
+* Thu Sep 8 2005  Jacob Boswell <jacob@privateroot.com>
+- Initial build.
