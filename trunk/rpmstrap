@@ -116,8 +116,8 @@ EOF
 }
 
 # Parse command line.
-COMMAND_LINE_OPTS=$(getopt -n "$PROGNAME" -q \
-       --longoptions help,\
+TEMP=$(getopt -n "$PROGNAME" --options hvf \
+--longoptions help,\
 find-best-mirror,\
 try-mirrors,\
 print-rpms,\
@@ -135,156 +135,159 @@ strip-path:,\
 include:,\
 exclude:,\
 pdk-source:,\
-verbose\
-        -- "$@")
+verbose -- $*)
+
+#echo $@
+#echo .
+#echo $TEMP
 
 if [ $? -ne 0 ]; then
-    usage_error "Error while parsing options"
+    die "Error while parsing options"
 fi
 
-eval set -- "$COMMAND_LINE_OPTS"
+eval set -- "$TEMP"
 
-if [ $# != 0 ] ; then
-    while :; do
-        case "$1" in
-            --find-best-mirror)
-                # XXX Later on, would be nice if this was persistant
-                FIND_BEST_MIRROR=yes
-                shift
-                ;;
-            --try-mirrors)
-                TRY_MIRRORS=yes
-                shift
-                ;;
-            --print-rpms)
-                ONLY_LIST_RPMS=yes
-                shift
-                ;;
-            --download-only)
-                DOWNLOAD_ONLY=yes
-                shift
-                ;;
-            --list-suites)
-                LIST_SUITES=yes
-                shift
-                ;;
-            --suite-notes)
-                SUITE_NOTES=yes
-                if [ -n "$2" ] ; then
-                    RPMSUITE="$2"
-                    shift 2
-                else
-                    usage_error "option requires an argument $1"
+while :; do
+    case "$1" in
+        ## Mirror options
+        --find-best-mirror)
+            # XXX Later on, would be nice if this was persistant
+            FIND_BEST_MIRROR=yes
+            shift
+            ;;
+        --try-mirrors)
+            TRY_MIRRORS=yes
+            shift
+            ;;
+        ## Information options
+        --print-rpms)
+            ONLY_LIST_RPMS=yes
+            shift
+            ;;
+        --list-suites)
+            LIST_SUITES=yes
+            shift
+            ;;
+        --suite-notes)
+            SUITE_NOTES=yes
+            if [ -n "$2" ] ; then
+                RPMSUITE="$2"
+                shift 2
+            else
+                usage_error "option requires an argument $1"
+            fi
+            ;;
+        ## Functionality options
+        --download-only)
+            DOWNLOAD_ONLY=yes
+            shift
+            ;;
+        --arch)
+            if [ -n "$2" ] ; then
+                ARCH="$2"
+                shift 2
+            else
+                usage_error "option requires an argument $1"
+            fi
+            ;;
+        --delay)
+            if [ -n "$2" ]; then
+                WGET_DELAY="$2"
+                shift 2
+            else
+                usage_error "option requires an argument $1"
+            fi
+            ;;
+        --local-source)
+            if [ -n "$2" ]; then
+                LOCAL_SOURCE="${2%/}"
+                shift 2
+            else
+                usage_error "option requires an argument $1"
+            fi
+            ;;
+        --unpack-tarball)
+            if [ -n "$2" ] ; then
+                if [ ! -f "$2" ] ; then
+                    usage_error "$2: No such file"
                 fi
-                ;;
-            --arch)
-                if [ -n "$2" ] ; then
-                    ARCH="$2"
-                    shift 2
+                if [ "$2" = "${2##\/}" ]; then
+                    UNPACK_TARBALL=$PWD/$2
                 else
-                    usage_error "option requires an argument $1"
-                fi
-                ;;
-            --force)
-                FORCE_RPM=yes
-                shift
-                ;;
-            --ignorearch)
-                IGNORE_ARCH=yes
-                shift
-                ;;
-            --delay)
-                if [ -n "$2" ]; then
-                    WGET_DELAY="$2"
-                    shift 2
-                else
-                    usage_error "option requires an argument $1"
-                fi
-                ;;
-            --local-source)
-                if [ -n "$2" ]; then
-                    LOCAL_SOURCE="${2%/}"
-                    shift 2
-                else
-                    usage_error "option requires an argument $1"
-                fi
-                ;;
-            --unpack-tarball)
-                if [ -n "$2" ] ; then
-                    if [ ! -f "$2" ] ; then
-                        usage_error "$2: No such file"
-                    fi
-                    if [ "$2" = "${2##\/}" ]; then
-                        UNPACK_TARBALL=$PWD/$2
-                    else
-                        UNPACK_TARBALL="$2"
-                    fi
-                    shift 2
-                else
-                    usage_error "option requires an argument $1"
-                fi
-                ;;
-            --pre)
-                if [ -n "$2" ]; then
-                    PRE_SCRIPT="$2"
-                    shift 2
-                else
-                    usage_error "option requires an argument $1"
-                fi
-                ;;
-            --post)
-                if [ -n "$2" ]; then
-                    POST_SCRIPT="$2"
-                    shift 2
-                else
-                    usage_error "option requires an argument $1"
-                fi
-                ;;
-            --strip-path)
-                if [ -n "$2" ]; then
-                    TARBALL_STRIP_DEPTH="--strip-path=$2"
-                else
-                    usage_error "option requires an argument $1"
+                    UNPACK_TARBALL="$2"
                 fi
                 shift 2
-                ;;
-            --include)
-                # Please don't do these in a logical fashion
-                # It just makes some people angry
-                INCLUDES="$(echo $1 | sed 's/.*=//;y/,/ /')"
-                shift 1
-                ;;
-            --exclude)
-                EXCLUDES="$(echo $1 | sed 's/.*=//;y/,/ /')"
-                shift 1
-                ;;
-            --pdk-source)
-                PDK_SOURCE="$(echo $1 | cut -f2 -d"=")"
-                PDK_WORKSPACE="$(echo $PDK_SOURCE | cut -f1 -d",")"
-                PDK_COMPONENT="$(echo $PDK_SOURCE | cut -f2 -d",")"
-                shift 1
-                ;;
-            --verbose)
-                DEBUG=yes
-                export DEBUG
-                shift 1
-                ;;
-            --help)
-                usage
-                exit 0
-                ;;
-            --)
-                ## XXX : Fix me. See? I just don't understand getopt
-                shift 1
-                ;;
-            *)
-                break
-                ;;
-        esac
+            else
+                usage_error "option requires an argument $1"
+            fi
+            ;;
+        --pre)
+            if [ -n "$2" ]; then
+                PRE_SCRIPT="$2"
+                shift 2
+            else
+                usage_error "option requires an argument $1"
+            fi
+            ;;
+        --post)
+            if [ -n "$2" ]; then
+                POST_SCRIPT="$2"
+                shift 2
+            else
+                usage_error "option requires an argument $1"
+            fi
+            ;;
+        --strip-path)
+            if [ -n "$2" ]; then
+                TARBALL_STRIP_DEPTH="--strip-path=$2"
+            else
+                usage_error "option requires an argument $1"
+            fi
+            shift 2
+            ;;
+        --include)
+            # Please don't do these in a logical fashion
+            # It just makes some people angry
+            INCLUDES="$(echo $1 | sed 's/.*=//;y/,/ /')"
+            shift 1
+            ;;
+        --exclude)
+            EXCLUDES="$(echo $1 | sed 's/.*=//;y/,/ /')"
+            shift 1
+            ;;
+        --pdk-source)
+            PDK_SOURCE="$(echo $1 | cut -f2 -d"=")"
+            PDK_WORKSPACE="$(echo $PDK_SOURCE | cut -f1 -d",")"
+            PDK_COMPONENT="$(echo $PDK_SOURCE | cut -f2 -d",")"
+            shift 1
+            ;;
+        ## Toggles
+        -f|--force)
+            FORCE_RPM=yes
+            shift
+            ;;
+        --ignorearch)
+            IGNORE_ARCH=yes
+            shift
+            ;;
+        -v|--verbose)
+            DEBUG=yes
+            export DEBUG
+            shift 1
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        --)
+            ## XXX : Fix me. See? I just don't understand getopt
+            shift 1
+            ;;
+        *)
+            break
+            ;;
+    esac
     done
-else
-    usage_error "You must specify a suite and a target."
-fi
 
 if [ -n "$LIST_SUITES" ]; then
     SCRIPT_DIR="$RPMSTRAP_DIR/scripts"
