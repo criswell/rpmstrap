@@ -137,10 +137,6 @@ exclude:,\
 pdk-source:,\
 verbose -- $*)
 
-#echo $@
-#echo .
-#echo $TEMP
-
 if [ $? -ne 0 ]; then
     die "Error while parsing options"
 fi
