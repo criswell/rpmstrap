@@ -6,7 +6,7 @@ The following are global variables available to the suite scripts.
 
 DEBUG                   Boolean. If true, issue debugging information.
 
-JUST_PRINT_RPMS         Boolean. If true, will only print the RPMs
+ONLY_LIST_RPMS          Boolean. If true, will only print the RPMs
                         needed for a suite.
 
 DOWNLOAD_ONLY           Boolean. If true, will only download and
