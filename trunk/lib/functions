@@ -258,6 +258,11 @@ install_by_pass() {
         rpm_ignore_arch_opt="--ignorearch"
     fi
 
+    local rpm_install_opt="--install"
+    if [ -n "$TRY_UPGRADE" ]; then
+        rpm_install_opt="--upgrade"
+    fi
+
     if [ "$DOWNLOAD_ONLY" = "" ]; then
         if [ $(id -u) -ne 0 ]; then
             die "must have root privileges to create target"
@@ -295,8 +300,8 @@ install_by_pass() {
                     TARGET="$PWD/$TARGET"
                 fi
                 trace "Installing $* to $TARGET..."
-                if ! rpm --install $rpm_force_opt --root "$TARGET" $@; then
-                    die "command \"rpm --install $rpm_force_opt $rpm_ignore_arch_opt --root $TARGET $*\"" \
+                if ! rpm $rpm_install_opt $rpm_force_opt --root "$TARGET" $@; then
+                    die "command \"rpm $rpm_install_opt $rpm_force_opt $rpm_ignore_arch_opt --root $TARGET $*\"" \
                     "failed"
                 fi
             fi
