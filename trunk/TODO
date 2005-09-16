@@ -10,3 +10,6 @@ with a radically different version of RPM than will be living
 inside the CentOS 4 chroot. Sure you can rebuild it afterward
 manually, but should the script handle this for you?
 
+* Rename TMP_DIR to RPMSTRAP_TMP_DIR at some point to avoid
+naming conflicts across other apps.
+

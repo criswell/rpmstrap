@@ -99,6 +99,11 @@ POST_SCRIPT             Script to run post install.
 IGNORE_ARCH             Boolean for determining if the arch should
                         be ignored during install.
 
+TRY_UPGRADE             This indicates the user wants to attempt an
+                        upgrade instead of an install in the directory
+                        specified. It is up to the suite script to
+                        deal with this (modify install RPMs, etc).
+
 RPMSTRAP FUNCTIONS:
 -------------------
 The following functions are available from rpmstrap for use in

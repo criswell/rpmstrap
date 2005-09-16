@@ -26,6 +26,7 @@ unset KEEP_TMP PKG_DIR MIRROR_LIST TRY_MIRRORS || true
 unset MIRROR WGET_DELAY TARBALL_STRIP_DEPTH || true
 unset FORCE_RPM SUITE_NOTES RPMSUITE PDK_SOURCE || true
 unset PRE_SCRIPT POST_SCRIPT IGNORE_ARCH || true
+unset TRY_UPGRADE || true
 
 if [ "$TMP_DIR" = "" ]; then
     TMP_DIR="/tmp/rpmstrap."
@@ -54,27 +55,27 @@ Usage: $PROGNAME [OPTION]... <suite> <target> [<mirror>]
 Bootstrap basic RPM-based systems.
 
     --arch                 set the intended architecture (set if uname is not
-                            installed on base system)
+                           installed on base system)
                             [ --arch x86_64 ]
 
     --download-only        download packages only and store them in the
-                            target directory
+                           target directory
 
     --delay                insert a friendly delay in seconds between each
-                            attempt to download an RPM
+                           attempt to download an RPM
                             [ --delay .5 ]
 
     --local-source         specify a local source directory for RPMS
                             [ --local-source /home/sam/rpm ]
 
     --pdk-source=A,B       specify a PDK workspace and component to pull RPMs
-                            from
+                           from
                             [ --pdk-source=workspace/path/,component.xml ]
 
     --print-rpms           print the packages to be installed, and exit
 
     --unpack-tarball       acquire .rpms from a tarball instead of a remote
-                            source
+                           source
 
     --strip-path           when unpacking from tarball, use the strip path
                             (See the texinfo document for tar)
@@ -89,6 +90,9 @@ Bootstrap basic RPM-based systems.
     --try-mirrors          instead of just using the default mirror, try
                            sequentially all of the mirrors in the event of
                            a failure
+
+    --upgrade              attempt to upgrade a given RPM-based install to
+                           the suite specified
 
     --force                force installation of RPMs even if there are
                            errors
@@ -125,6 +129,7 @@ download-only,\
 list-suites,\
 suite-notes:,\
 arch:,\
+upgrade,\
 force,\
 delay:,\
 local-source:,\
@@ -174,6 +179,10 @@ while :; do
             fi
             ;;
         ## Functionality options
+        --upgrade)
+            TRY_UPGRADE=yes
+            shift
+            ;;
         --download-only)
             DOWNLOAD_ONLY=yes
             shift
