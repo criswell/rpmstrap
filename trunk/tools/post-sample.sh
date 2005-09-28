@@ -26,7 +26,7 @@
 # For our example, we will first make the $TARGET environment more
 # immediately useful:
 cp -f /etc/resolv.conf $TARGET/etc/.
-touch $TARGET/fstab
+touch $TARGET/etc/fstab
 mkdir -p $TARGET/proc
 mount -t proc proc $TARGET/proc
 

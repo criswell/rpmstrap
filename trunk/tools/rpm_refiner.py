@@ -57,9 +57,9 @@ def process(rpm_dir, recursive, progress, verbose, pdk_output):
 
     # Okay we do stuff
     if pdk_output:
-        ordered = solver.order_solver(1)
-    else:
         ordered = solver.order_solver(0)
+    else:
+        ordered = solver.order_solver(1)
     ordered.reverse()
     tmp_dir = tempfile.mkdtemp()
 
