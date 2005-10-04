@@ -107,7 +107,7 @@ EOF
                     do
                         trace "get_rpms(): Getting RPM from $mir"
                         wget $verbose ${mir%/}/$a -O $a
-                        if [ ! -f "$a" ]; then
+                        if [ -s "$a" ]; then
                             break
                         fi
                     done
