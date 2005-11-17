@@ -102,7 +102,7 @@ def process(rpm_to_dir, rpm_from_dir, mirror, contcopy, verbose, recurse, progre
             cmd = ("wget -r -l1 --no-parent -A \"%s\" %s") % (update_file, mirror)
             if verbose: print ">> " + cmd
             output = commands.getoutput(cmd)
-            if (not os.path.exists(path) and (not dontcopy):
+            if (not os.path.exists(path)) and (not dontcopy):
                 # Okay, download didn't work, let's just copy the file over and log it
                 cmd = ("cp %s %s/.") % (rpm_from_dict[rpm]['filename'], rpm_to_dir)
                 if verbose: print">> File could not download, default to copy original"
