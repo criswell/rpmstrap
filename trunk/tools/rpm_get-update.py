@@ -98,8 +98,7 @@ def process(rpm_to_dir, rpm_from_dir, mirror, dontcopy, verbose, recurse, progre
         # check if the update exists
         if not rpm_to_dict.has_key(rpm):
             # First, attempt to grab from mirror
-            update_file = rpm + "*.rpm"
-            cmd = ("wget -r -l1 --no-parent -A \"%s\" -P \"%s\" %s") % (update_file, rpm_to_dir, mirror)
+            cmd = ("wget -nd -P \"%s\" \"%s/%s-*.rpm\"") % (rpm_to_dir, mirror, rpm)
             if verbose: print ">> " + cmd
             output = commands.getoutput(cmd)
             if (not list_files(rpm_to_dir, update_file, False)) and (not dontcopy):
@@ -122,6 +121,7 @@ def usage():
     print " Given a pile of RPMs for a current platform, and a pile of RPMs for an"
     print "updated platform, will check if the updated platform has all the same package"
     print "names as the original. If not, will attempt to download them from a URL."
+    print "Note: URL MUST BE FTP (HTTP WILL NOT WORK)"
     print "\nUSAGE:"
     print "     get-arch.py [options] <RPM_OLD_DIR> <RPM_NEW_DIR> <MIRROR>"
     print "\nWhere [options] may be one of the following:"
