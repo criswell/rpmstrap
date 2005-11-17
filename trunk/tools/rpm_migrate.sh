@@ -141,7 +141,7 @@ while read LINE; do
             trace "Removing $F_FROM from target (not copying)"
             ;;
         *)
-            die "Problem in line '$LINE' - Unidentified type"
+            trace "Problem in line '$LINE' - Unidentified type (could be comment, ignoring)"
             ;;
     esac
 done
