@@ -15,6 +15,17 @@ if [ "$DOCDIR" = "" ]; then
 fi
 DOCDIR=$DOCDIR/rpmstrap-$VERSION
 
+# Define the tools to install
+TOOLS=$(cat <<EOF
+rpm_solver.py
+rpm_refiner.py
+rpm_get-arch.py
+rpm_get-update.py
+rpmdiff.py
+rpm_migrade.sh
+EOF
+)
+
 if [ $# != 0 ] ; then
     while true ; do
         case "$1" in
@@ -27,10 +38,10 @@ if [ $# != 0 ] ; then
                 ;;
             -p)
                 rm -f $BINDIR/rpmstrap
-                rm -f $BINDIR/rpm_solver.py
-                rm -f $BINDIR/rpm_refiner.py
-                rm -f $BINDIR/rpm_get-arch.py
-                rm -f $BINDIR/rpm_get-update.py
+                for a in $TOOLS
+                do
+                    rm -f $BINDIR/$a
+                done
                 rm -fr $LIBDIR
                 rm -fr $DOCDIR
                 echo "rpmstrap purged"
@@ -47,19 +58,22 @@ fi
 
 mkdir -p $BINDIR
 cp -fr rpmstrap $BINDIR/.
+chmod a+x $BINDIR/rpmstrap
 mkdir -p $LIBDIR
 cp -fr lib/functions $LIBDIR/.
 cp -fr lib/scripts $LIBDIR/.
 cp -fr tools/ $LIBDIR/.
-ln -s $LIBDIR/tools/rpm_solver.py $BINDIR/rpm_solver.py
-ln -s $LIBDIR/tools/rpm_refiner.py $BINDIR/rpm_refiner.py
-ln -s $LIBDIR/tools/rpm_get-arch.py $BINDIR/rpm_get-arch.py
-ln -s $LIBDIR/tools/rpm_get-update.py $BINDIR/rpm_get-update.py
+for a in $TOOLS
+do
+    ln -s $LIBDIR/tools/$a $BINDIR/$a
+    chmod a+x $BINDIR/$a
+done
 mkdir -p $DOCDIR
 cp -fr lib/*.txt $DOCDIR/.
 cp -fr LICENSE $DOCDIR/.
 cp -fr README $DOCDIR/.
 cp -fr TODO $DOCDIR/.
 cp -fr CHANGES $DOCDIR/.
+
 
 echo rpmstrap installed
