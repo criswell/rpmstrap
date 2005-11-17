@@ -102,7 +102,7 @@ while :; do
     esac
 done
 
-if [ "$1" = "" ] ); then
+if [ "$1" = "" ]; then
     usage
     die "Usage error, you must supply a target directory"
 fi
