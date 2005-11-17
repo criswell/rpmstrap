@@ -108,6 +108,7 @@ if [ "$1" = "" ]; then
 fi
 
 TARGET_DIR=$1
+mkdir -p $TARGET_DIR
 
 while read LINE; do
     trace $LINE
