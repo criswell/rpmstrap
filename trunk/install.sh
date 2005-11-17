@@ -30,6 +30,7 @@ if [ $# != 0 ] ; then
                 rm -f $BINDIR/rpm_solver.py
                 rm -f $BINDIR/rpm_refiner.py
                 rm -f $BINDIR/rpm_get-arch.py
+                rm -f $BINDIR/rpm_get-update.py
                 rm -fr $LIBDIR
                 rm -fr $DOCDIR
                 echo "rpmstrap purged"
@@ -53,6 +54,7 @@ cp -fr tools/ $LIBDIR/.
 ln -s $LIBDIR/tools/rpm_solver.py $BINDIR/rpm_solver.py
 ln -s $LIBDIR/tools/rpm_refiner.py $BINDIR/rpm_refiner.py
 ln -s $LIBDIR/tools/rpm_get-arch.py $BINDIR/rpm_get-arch.py
+ln -s $LIBDIR/tools/rpm_get-update.py $BINDIR/rpm_get-update.py
 mkdir -p $DOCDIR
 cp -fr lib/*.txt $DOCDIR/.
 cp -fr LICENSE $DOCDIR/.
