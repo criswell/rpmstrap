@@ -99,10 +99,10 @@ def process(rpm_to_dir, rpm_from_dir, mirror, contcopy, verbose, recurse, progre
         if not rpm_to_dict.has_key(rpm):
             # First, attempt to grab from mirror
             update_file = rpm + "*.rpm"
-            cmd = ("wget -r -l1 --no-parent -A \"%s\" %s") % (update_file, mirror)
+            cmd = ("wget -r -l1 --no-parent -A \"%s\" -P \"%s\" %s") % (update_file, rpm_to_dir, mirror)
             if verbose: print ">> " + cmd
             output = commands.getoutput(cmd)
-            if (not os.path.exists(path)) and (not dontcopy):
+            if (not list_files(rpm_to_dir, update_file, False)) and (not dontcopy):
                 # Okay, download didn't work, let's just copy the file over and log it
                 cmd = ("cp %s %s/.") % (rpm_from_dict[rpm]['filename'], rpm_to_dir)
                 if verbose: print">> File could not download, default to copy original"
