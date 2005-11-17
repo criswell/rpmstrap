@@ -143,6 +143,7 @@ while read LINE; do
         *)
             die "Problem in line '$LINE' - Unidentified type"
             ;;
+    esac
 done
 
 trace "Done. Restoring STDIN (if necessary)"
