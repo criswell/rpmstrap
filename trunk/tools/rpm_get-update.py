@@ -157,6 +157,11 @@ def main():
         mirror = sys.argv[-1]
         rpm_to_dir = sys.argv[-2]
         rpm_from_dir = sys.argv[-3]
+        if verbose:
+            print "Using:"
+            print "\t'%s' for RPM_OLD_DIR" % rpm_from_dir
+            print "\t'%s' for RPM_NEW_DIR" % rpm_to_dir
+            print "\t'%s' for MIRROR" % mirror
     except:
         usage()
         sys.exit(2)
