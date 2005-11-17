@@ -68,7 +68,7 @@ def grab_rpm_files(directory, recurse=0, binpkg=1, srcpkg=0):
 
     return rpm_files
 
-def process(rpm_to_dir, rpm_from_dir, mirror, contcopy, verbose, recurse, progress):
+def process(rpm_to_dir, rpm_from_dir, mirror, dontcopy, verbose, recurse, progress):
 
     if verbose: print ">process(..)"
 
