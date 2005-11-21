@@ -22,7 +22,7 @@ rpm_refiner.py
 rpm_get-arch.py
 rpm_get-update.py
 rpmdiff.py
-rpm_migrade.sh
+rpm_migrate.sh
 EOF
 )
 
