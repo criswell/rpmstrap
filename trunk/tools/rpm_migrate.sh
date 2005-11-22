@@ -133,8 +133,8 @@ while read LINE; do
             # Effectively add and update are the same
             # however, keeping them seperate in case
             # this ever changes
-            trace "cp $CP_OPTS $F_FROM $TARGET_DIR/."
-            cp $CP_OPTS $F_FROM $TARGET_DIR/.
+            trace "cp $CP_OPTS $F_TO $TARGET_DIR/."
+            cp $CP_OPTS $F_TO $TARGET_DIR/.
             ;;
         REMOVE)
             # We do nothing here
