@@ -18,7 +18,7 @@
 #
 # Author: Sam Hart
 
-from elementtree.ElementTree import ElementTree, Element, dump
+from elementtree.ElementTree import ElementTree, Element, dump, fromstring
 import os
 import fnmatch
 import commands
@@ -143,7 +143,7 @@ def process(directory, option, file_out, use_file_out, xml_file, group, verbose,
 
         text += "</packagelist>\n"
         text += "</group>\n"
-        node = ElementTree.fromstring(text)
+        node = fromstring(text)
         elem.append(node)
     else:
         die("Some unknown error has occured. Neither 'ADD' nor 'ERASE' was specified, somehow")
