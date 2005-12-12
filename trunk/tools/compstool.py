@@ -118,7 +118,7 @@ def process(directory, option, file_out, use_file_out, xml_file, group, verbose,
             for subelem in elem[i].getiterator():
                 p = p + 1.0
                 if progress:
-                    percentage = p / len(rpm_files)
+                    percentage = p / len(rpm_names)
                     pb.progress(percentage)
 
                 if subelem.tag == "packagereq":
