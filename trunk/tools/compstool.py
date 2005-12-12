@@ -87,7 +87,7 @@ def get_names_from_dir(directory, recurse, pb, progress):
         if progress:
             percentage = i / len(rpm_files)
             pb.progress(percentage)
-        cmd = "rpm -qp --qf \"%%{name}\" %s" % filename
+        cmd = "rpm -qp --qf \"%%{name}\" %s" % file
         rpm_names.append(commands.getoutput(cmd))
 
     return rpm_names
