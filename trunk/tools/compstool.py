@@ -113,18 +113,18 @@ def process(directory, option, file_out, use_file_out, xml_file, group, verbose,
 
     if option == comps_opt.ERASE:
         """ Handle the ERASE operations """
-        for i in xrange(len(elem)):
-            p = 0.0
-            for subelem in elem[i].getiterator():
-                p = p + 1.0
-                if progress:
-                    percentage = p / len(rpm_names)
-                    pb.progress(percentage)
+        for subelem in elem:
+            for subsub in subelem:
+                p = 0.0
+                for subsubsub in subsub:
+                    p = p + 1.0
+                    if progress:
+                        percentage = p / len(subsub)
+                        pb.progress(percentage)
 
-                if subelem.tag == "packagereq":
-                    if subelem.text in rpm_names:
-                        elem[i].remove(subelem)
-                        if verbose: print "Found %s, removing" % subelem.text
+                    if subsubsub.tag == 'packagereq' and subsubsub.text in rpm_names:
+                        subsub.remove(subsubsub)
+                        if verbose: print "Found %s, removing" % subsubsub.text
     elif option == comps_opt.ADD:
         """ Handle the ADD operations """
         text = "<group>\n"
