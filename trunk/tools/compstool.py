@@ -218,6 +218,10 @@ def main():
         if o in ("-g", "--group"):
             group = a
 
+    if len(sys.argv) < 2:
+        usage()
+        sys.exit(2)
+
     try:
         xml_file = sys.argv[-1]
         if verbose:
