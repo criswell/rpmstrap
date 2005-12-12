@@ -136,7 +136,7 @@ def process(directory, option, file_out, use_file_out, xml_file, group, verbose,
         for name in rpm_names:
             p = p + 1.0
             if progress:
-                percentage = p / len(rpm_files)
+                percentage = p / len(rpm_names)
                 pb.progress(percentage)
 
             text += "<packagereq type=\"mandatory\">%s</packagereq>\n" % name
