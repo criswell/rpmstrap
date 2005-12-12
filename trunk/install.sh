@@ -23,6 +23,9 @@ rpm_get-arch.py
 rpm_get-update.py
 rpmdiff.py
 rpm_migrate.sh
+compstool.py
+progress_bar.py
+rpmdiff_lib.py
 EOF
 )
 
@@ -74,6 +77,5 @@ cp -fr LICENSE $DOCDIR/.
 cp -fr README $DOCDIR/.
 cp -fr TODO $DOCDIR/.
 cp -fr CHANGES $DOCDIR/.
-
 
 echo rpmstrap installed
