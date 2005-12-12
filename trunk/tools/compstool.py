@@ -227,7 +227,7 @@ def main():
         usage()
         sys.exit(2)
 
-    if option == comps_opt.ADD && group == "":
+    if option == comps_opt.ADD and group == "":
         die("'add' requires a group set")
 
     process(directory, option, file_out, use_file_out, xml_file, group, verbose, recurse, progress)
