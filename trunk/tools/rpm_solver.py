@@ -95,10 +95,10 @@ class rpm_solver:
         self.pb = progress_bar("rpm_solver :", "-", columns, sys.stderr)
 
 
-    def init_db(self, rpm_dir, avail_dir=None, recursive=0):
+    def init_db(self, rpm_dir, avail_dir=None, recursive=0, work_dir=tempfile.mkdtemp()):
         """ Init the database """
 
-        self.solver_db = self.db(rpm_dir, recursive)
+        self.solver_db = self.db(rpm_dir, recursive, work_dir)
         self.solver_db.populate_db(self.verbose, self.pb, 1, self.progress)
 
         self.use_avail = 0
@@ -198,12 +198,12 @@ class rpm_solver:
         return order_filename
 
     class db:
-        def __init__(self, rpm_dir=".", recurse=1, ext="*.rpm"):
+        def __init__(self, rpm_dir=".", recurse=1, work_dir=tempfile.mkdtemp(), ext="*.rpm"):
             self.rpm_dir = rpm_dir
             self.recurse = recurse
             self.rpmdb = {}
             self.ext = ext
-            self.tmp_dir = tempfile.mkdtemp()
+            self.tmp_dir = work_dir
             self.ts = rpm.TransactionSet(self.tmp_dir)
             self.ts.setVSFlags(rpm._RPMVSF_NOSIGNATURES)
 
@@ -320,11 +320,11 @@ class rpm_solver:
                 os.path.walk(root, visit, arg)
                 return arg.results
 
-def process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verbose, pdk_output):
+def process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verbose, pdk_output, work_dir):
     """ Main process if ran from command line """
 
     solver = rpm_solver(progress, verbose)
-    solver.init_db(rpm_dir, solve_dir, recursive)
+    solver.init_db(rpm_dir, solve_dir, recursive, work_dir)
     needed, problems = solver.dep_closure()
     solver_steps = []
 
@@ -385,12 +385,13 @@ def usage():
     print "\t-p | --progress\tUse progress bar"
     print "\t-r | --recursive\tScan RPM_DIR recursively"
     print "\t-k | --pdk\t\tProduce PDK ready XML snippits"
+    print "\t-w | --work\t\tSupply a work dir (typically chroot) for rpmdb"
     print "\n\n"
 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "vprs:cuyk", ["verbose", "progress", "recursive", "solve=", "check", "yes", "pdk"])
+        opts, args = getopt.getopt(sys.argv[1:], "vprs:cuykw:", ["verbose", "progress", "recursive", "solve=", "check", "yes", "pdk", "work="])
     except getopt.GetoptError:
         # print help information and exit:
         usage()
@@ -403,6 +404,7 @@ def main():
     check_only = 0
     yes_solve = 0
     pdk_output = 0
+    work_dir = tempfile.mkdtemp()
 
     if len(sys.argv) < 2:
         usage()
@@ -432,9 +434,12 @@ def main():
         if o in ("-k", "--pdk"):
             pdk_output = 1
 
+        if o in ("-w", "--work"):
+            work_dir = a
+
     if verbose > 1: print "WARNING: Excessive debugging"
 
-    process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verbose, pdk_output)
+    process(rpm_dir, solve_dir, yes_solve, check_only, recursive, progress, verbose, pdk_output, work_dir)
 
 if __name__ == "__main__":
     main()

@@ -35,11 +35,11 @@ def get_rpm_name(path, rpm):
     cmd = "rpm -qp --qf \"%%{name}\" %s/%s" % (path, rpm)
     return commands.getoutput(cmd)
 
-def process(rpm_dir, recursive, progress, verbose, pdk_output):
+def process(rpm_dir, recursive, progress, verbose, pdk_output, work_dir):
     """ Main process if ran from command line """
 
     solver = rpm_solver.rpm_solver(progress, verbose)
-    solver.init_db(rpm_dir, None, recursive)
+    solver.init_db(rpm_dir, None, recursive, work_dir)
     needed, problems = solver.dep_closure()
 
     if len(needed):
@@ -113,12 +113,13 @@ def usage():
     print "\t-p | --progress\tUse progress bar"
     print "\t-r | --recursive\tScan RPM_DIR recursively"
     print "\t-k | --pdk\t\tProduce PDK ready XML snippits"
+    print "\t-w | --work\t\tSupply a work dir (typically chroot) for rpmdb"
     print "\n\n"
 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "vprk", ["verbose", "progress", "recursive", "pdk"])
+        opts, args = getopt.getopt(sys.argv[1:], "vprkw:", ["verbose", "progress", "recursive", "pdk", "work="])
     except getopt.GetoptError:
         # print help information and exit:
         usage()
@@ -128,6 +129,7 @@ def main():
     progress = 0
     recursive = 0
     pdk_output = 0
+    work_dir = tempfile.mkdtemp()
 
     if len(sys.argv) < 2:
         usage()
@@ -148,9 +150,12 @@ def main():
         if o in ("-k", "--pdk"):
             pdk_output = 1
 
+        if o in ("-w", "--work"):
+            work_dir = a
+
     if verbose > 1: print "WARNING: Excessive debugging"
 
-    process(rpm_dir,recursive, progress, verbose, pdk_output)
+    process(rpm_dir,recursive, progress, verbose, pdk_output, work_dir)
 
 if __name__ == "__main__":
     main()
