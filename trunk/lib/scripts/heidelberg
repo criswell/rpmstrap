@@ -285,3 +285,10 @@ print_rpms() {
 install_rpms() {
     install_by_pass $RPMS
 }
+
+suite_details() {
+    for a in $RPMS
+    do
+        echo $a
+    done
+}

@@ -385,3 +385,10 @@ install_rpms() {
     mkdir -p $TARGET/proc
     touch $TARGET/etc/fstab
 }
+
+suite_details() {
+    for a in $RPMS
+    do
+        echo $a
+    done
+}

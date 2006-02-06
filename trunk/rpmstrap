@@ -26,7 +26,7 @@ unset KEEP_TMP PKG_DIR MIRROR_LIST TRY_MIRRORS || true
 unset MIRROR WGET_DELAY TARBALL_STRIP_DEPTH || true
 unset FORCE_RPM SUITE_NOTES RPMSUITE PDK_SOURCE || true
 unset PRE_SCRIPT POST_SCRIPT IGNORE_ARCH || true
-unset TRY_UPGRADE || true
+unset TRY_UPGRADE SUITE_DETAILS || true
 
 if [ "$TMP_DIR" = "" ]; then
     TMP_DIR="/tmp/rpmstrap."
@@ -84,6 +84,9 @@ Bootstrap basic RPM-based systems.
 
     --suite-notes          show the notes associated with a specific suite
 
+    --suite-details        show the details of the suite (items to install
+                            and order)
+
     --find-best-mirror     find the best mirror (warning VERY slow, may be
                            better to just use a slow mirror ;-)
 
@@ -140,6 +143,7 @@ strip-path:,\
 include:,\
 exclude:,\
 pdk-source:,\
+suite-details:,\
 verbose -- $*)
 
 if [ $? -ne 0 ]; then
@@ -148,7 +152,7 @@ fi
 
 eval set -- "$TEMP"
 
-while :; do
+while [ $1 != -- ]; do
     case "$1" in
         ## Mirror options
         --find-best-mirror)
@@ -171,6 +175,15 @@ while :; do
             ;;
         --suite-notes)
             SUITE_NOTES=yes
+            if [ -n "$2" ] ; then
+                RPMSUITE="$2"
+                shift 2
+            else
+                usage_error "option requires an argument $1"
+            fi
+            ;;
+        --suite-details)
+            SUITE_DETAILS=yes
             if [ -n "$2" ] ; then
                 RPMSUITE="$2"
                 shift 2
@@ -284,15 +297,12 @@ while :; do
             usage
             exit 0
             ;;
-        --)
-            ## XXX : Fix me. See? I just don't understand getopt
-            shift 1
-            ;;
         *)
             break
             ;;
     esac
 done
+shift
 
 if [ -n "$LIST_SUITES" ]; then
     SCRIPT_DIR="$RPMSTRAP_DIR/scripts"
@@ -314,6 +324,18 @@ elif [ -n "$SUITE_NOTES" ]; then
     trace "Calling $RPMSUITE for notes"
 
     suite_notes
+elif [ -n "$SUITE_DETAILS" ]; then
+    SCRIPT="$RPMSTRAP_DIR/scripts/$RPMSUITE"
+
+    trace "Loading $SCRIPT suite"
+
+    . $SCRIPT
+
+    trace "Work out RPMS"
+    work_out_rpms
+
+    trace "Calling $RPMSUITE for details"
+    suite_details
 else
     if [ "$1" = "" ] && ( [ "$2" = "" ] && [ "$ONLY_LIST_RPMS" = "" ] ); then
         usage_error "You must specify a suite and a target."

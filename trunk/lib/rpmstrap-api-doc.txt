@@ -88,6 +88,11 @@ SUITE_NOTES             Boolean. If true, then the user wants suite
                         notes.
                         *Suite scripts should not modify this.*
 
+SUITE_DETAILS           Boolean. If true, then the user wants the
+                        details of what the suite script will install
+                        as well as order detail.
+                        *Suite scripts should not modify this.*
+
 PDK_SOURCE              The PDK source information.
 
 PRE_SCRIPT              Script to run before install.
@@ -145,6 +150,8 @@ suite_notes()           This function will display any notes pertaining
                         but generally it includes author, what the suite
                         does, any warnings or limitations, as well as
                         usage information (if aplicable).
+
+suite_details()         Dump the raw rpm installation order details.
 
 work_out_mirror()       This function should figure out which mirror
                         list to use and call the rpmstrap function
