@@ -26,6 +26,7 @@ rpm_migrate.sh
 compstool.py
 progress_bar.py
 rpmdiff_lib.py
+suite_upgrader.py
 EOF
 )
 
@@ -75,6 +76,7 @@ mkdir -p $DOCDIR
 cp -fr lib/*.txt $DOCDIR/.
 cp -fr LICENSE $DOCDIR/.
 cp -fr README $DOCDIR/.
+cp -fr tools/README $DOCDIR/README.tools
 cp -fr TODO $DOCDIR/.
 cp -fr CHANGES $DOCDIR/.
 

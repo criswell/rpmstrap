@@ -103,6 +103,7 @@ work_out_rpms() {
 34:net-tools-1.60-37.EL4.6.i386.rpm
 35:popt-1.9.1-11_nonptl.i386.rpm
 35:readline-4.3-13.i386.rpm
+36:audit-libs-1.0.3-6.EL4.i386.rpm
 36:mkinitrd-4.2.1.6-1.i386.rpm
 36:kernel-2.6.9-22.EL.i586.rpm
 36:hotplug-2004_04_01-7.6.i386.rpm
@@ -151,6 +152,11 @@ work_out_rpms() {
 50:rpm-python-4.3.3-11_nonptl.i386.rpm
 51:wget-1.10.1-2.4E.1.i386.rpm
 52:centos-yumconf-4-4.3.noarch.rpm
+52:python-elementtree-1.2.6-4.i386.rpm
+52:python-sqlite-1.1.6-1.i386.rpm
+52:python-urlgrabber-2.9.6-2.noarch.rpm
+52:expat-1.95.7-4.i386.rpm
+52:sqlite-3.2.2-1.i386.rpm
 52:yum-2.4.0-1.centos4.noarch.rpm
 53:nano-1.2.4-1.i386.rpm
 54:openldap-2.2.13-3.i386.rpm
