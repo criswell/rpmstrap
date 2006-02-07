@@ -21,3 +21,5 @@
       - Add suite-details option as well as suite_upgrader in tools
       - Add upgrade option
       - Add force option
+
+0.5.3 - Add rpm-srpm checking tool

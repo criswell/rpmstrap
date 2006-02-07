@@ -27,6 +27,7 @@ compstool.py
 progress_bar.py
 rpmdiff_lib.py
 suite_upgrader.py
+rpm_srpm_check.py
 EOF
 )
 
