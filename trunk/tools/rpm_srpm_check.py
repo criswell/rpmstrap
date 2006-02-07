@@ -34,6 +34,11 @@ import commands
 import getopt
 import sys
 import getopt
+import rpm
+import tempfile
+
+rpmts = rpm.TransactionSet(tempfile.mkdtemp())
+rpmts.setVSFlags(rpm._RPMVSF_NOSIGNATURES)
 
 def list_files(root, patterns='*', recurse=1, return_folders=0):
     """List all the files in a directory"""
@@ -64,11 +69,10 @@ def list_files(root, patterns='*', recurse=1, return_folders=0):
 def get_rpm_source_info(rpm_filename):
     """Grab the SRPM information from the RPM file"""
 
-    cmd = ("rpm -qp --qf \"%%{sourcerpm}\" %s") % rpm_filename
-    output = commands.getoutput(cmd)
-    print output
-    source_rpm = output.split(' ')
-    return source_rpm[0]
+    fdno = os.open(rpm_filename, os.O_RDONLY)
+    hdr = rpmts.hdrFromFdno(fdno)
+    os.close(fdno)
+    return hdr[rpm.RPMTAG_SOURCERPM]
 
 def check_srpms(rpm_dir, srpm_dir, recurse=0, get_from_uri=0, uri="", quiet=0):
     """Given directories for SRPMs and RPMs, check we have SRPMs
