@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=0.5.1
+VERSION=0.5.2
 
 if [ "$BINDIR" = "" ]; then
     BINDIR=$DESTDIR/usr/bin

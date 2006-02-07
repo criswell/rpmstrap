@@ -17,3 +17,7 @@
       - Reworded some output to make certain people stop crying
       - Refused to accept any further code from Jake Tabke
 
+0.5.2 - Update sl402, centos4, centos3
+      - Add suite-details option as well as suite_upgrader in tools
+      - Add upgrade option
+      - Add force option
