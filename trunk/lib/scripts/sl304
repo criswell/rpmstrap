@@ -39,7 +39,7 @@ work_out_mirror() {
     case $ARCH in
         i[3456]86)
             big_mirror_list=$(cat <<EOF
-http://gd.tuwien.ac.at/opsys/linux/scientific/304/i386/SL/RPMS/
+ftp://ftp.scientificlinux.org/linux/scientific/304/i386/SL/RPMS
 http://mirror.cs.wisc.edu/pub/mirrors/linux/scientificlinux.org/304/i386/SL/RPMS/
 http://mirror.phy.olemiss.edu/mirror/scientific/304/i386/SL/RPMS/
 EOF
