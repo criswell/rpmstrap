@@ -82,7 +82,7 @@ def check_srpms(rpm_dir, srpm_dir, recurse=0, get_from_uri=0, uri="", quiet=0):
     problematic = ""
     srpm_dir = srpm_dir.rstrip("/")
     if quiet:
-        wget_opt = "-q"
+        wget_opt = "-s"
 
     for rpm_file in list_files(rpm_dir, '*.rpm', recurse):
         source_rpm = get_rpm_source_info(rpm_file)
@@ -96,7 +96,7 @@ def check_srpms(rpm_dir, srpm_dir, recurse=0, get_from_uri=0, uri="", quiet=0):
                 if not quiet>2:
                     print "Atempting to get " + source_rpm
                 full_url = ("%s/%s") % (uri, source_rpm)
-                cmd = ("wget %s -O \"%s\" %s") % (wget_opt, path, full_url)
+                cmd = ("curl %s -o \"%s\" %s") % (wget_opt, path, full_url)
                 if not quiet>1: print cmd
                 output = commands.getoutput(cmd)
                 if not quiet>1 :print output
