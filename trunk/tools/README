@@ -36,3 +36,12 @@ rpmstrap.
    This script is useful if you have one arch all worked out (e.g.
    x86) but want to try to work out the rpmstrap script for
    another arch (e.g., ppc).
+
+* rpm_srpm_check.py
+   Given an RPM and an SRPM directory, will run through all the
+   RPMs to verify they have an associated SRPM. If the SRPM is
+   not found, it can optionally download it.
+
+* rpmdiff.py
+   Given two piles of RPMs, wil perform a difference of the two.
+   
