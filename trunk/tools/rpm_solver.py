@@ -26,7 +26,6 @@ import os
 import fnmatch
 import getopt
 import sys
-import getopt
 import rpm
 import traceback
 import commands
