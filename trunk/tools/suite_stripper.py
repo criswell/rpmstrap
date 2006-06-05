@@ -47,7 +47,7 @@ def process(suite_details):
         pkg_name = tmp_pkg_name[1]
         if len(name_details):
             pkg_name = pkg_name + "-" + "-".join(name_details)
-        print pkg_name
+        print "'%s'," % pkg_name
 
 def usage():
     print "\nsuite_stripper - strips out version info and other stuff returning just package names"
