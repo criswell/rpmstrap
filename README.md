@@ -1,6 +1,6 @@
 This is the repo of the legacy rpmstrap tool.
 
-rpmstrap was a tool we made at Progeny Linux Systems (circa 2004-ish). It was
+rpmstrap was a tool we made at [Progeny Linux Systems](https://en.wikipedia.org/wiki/Progeny_Linux_Systems) (circa 2004-ish). It was
 intended to be the RPM equivalent of debootstrap. We used it in our creation
 of RPM-based custom distros.
 
