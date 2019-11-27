@@ -22,7 +22,7 @@ to host at Github. So the repo is all manner of fucky at this point.
 So one funny thing is that rpmstrap is, technically, still around as of 2019. It
 was forked *years* ago (like 2008-ish) and pulled into a bunch of virtualization
 technologies and tools. For example, I remember finding a version of it living
-in VMWare scripts in 2010-ish, and chunks of it was lifted to power sections of
+in VMWare scripts in 2010-ish, and chunks of it were lifted to power sections of
 Xen's RPM suite. It's very likely elsewhere as well.
 
 Of course, by 2019 all this shit has likely evolved so far beyond what rpmstrap
